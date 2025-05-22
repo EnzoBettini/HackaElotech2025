@@ -4,716 +4,662 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sentinel Saúde: Painel de Inteligência Epidemiológica</title>
+    <title>Bem-vindo ao DiagnoMap</title>
     <link
-        href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&family=Montserrat:wght@600;700&display=swap"
+        href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&family=Montserrat:wght@500;600;700&display=swap"
         rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+        integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
     <style>
-        /* Reset e Estilos Globais */
         :root {
-            --primary-color: #0A3D62;
-            /* Azul Petróleo (Opção 1) */
-            --secondary-color: #2C3E50;
-            /* Azul Escuro (Alternativa) */
-            --accent-color: #E67E22;
-            /* Laranja Vibrante (Opção 1) */
-            --highlight-color: #1ABC9C;
-            /* Verde Água (Interação) */
-            --alert-critical-bg: #FC5C65;
-            --alert-warning-bg: #F7B731;
-            --text-light: #F8F9FA;
-            --text-dark: #343A40;
+            --primary-color: #075985;
+            --secondary-color: #34495e;
+            --accent-color: #f59e0b;
+            --highlight-color: #10b981;
+            --danger-color: #ef4444;
+            /* Cor para o pulso do coração */
+            --text-light: #f8fafc;
+            --text-dark: #1f2937;
+            --text-muted: #6b7280;
             --bg-light: #FFFFFF;
-            --bg-medium: #ECF0F1;
-            --border-color: #D1D8E0;
-            --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.05);
-            --shadow-md: 0 4px 8px rgba(0, 0, 0, 0.1);
+            --bg-base: #f0f4f8;
+            --border-color: #e5e7eb;
+            --border-radius-md: 12px;
+            --border-radius-lg: 16px;
+            --shadow-md: 0 5px 15px rgba(0, 0, 0, 0.07);
+            --shadow-lg: 0 10px 25px rgba(0, 0, 0, 0.08);
+            --font-primary: 'Roboto', sans-serif;
+            --font-secondary: 'Montserrat', sans-serif;
         }
 
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
+        @keyframes pulseLogoHeart {
+
+            /* ANIMAÇÃO PARA O ÍCONE DO LOGO */
+            0% {
+                transform: scale(1);
+                color: var(--highlight-color);
+            }
+
+            50% {
+                transform: scale(1.25);
+                color: var(--danger-color);
+            }
+
+            /* Aumenta e muda de cor */
+            100% {
+                transform: scale(1);
+                color: var(--highlight-color);
+            }
+        }
+
+        html {
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            height: 100%;
         }
 
         body {
-            font-family: 'Roboto', sans-serif;
-            background-color: var(--bg-medium);
+            font-family: var(--font-primary);
+            background-color: var(--bg-base);
             color: var(--text-dark);
             display: flex;
-            height: 100vh;
-            overflow: hidden;
-            /* Prevenir scroll no body */
-        }
-
-        /* Navegação Lateral */
-        .sidebar {
-            width: 260px;
-            background-color: var(--secondary-color);
-            color: var(--text-light);
-            padding: 20px 0;
-            transition: width 0.3s ease;
-            height: 100vh;
-            display: flex;
             flex-direction: column;
-            overflow-y: auto;
-        }
-
-        .sidebar.collapsed {
-            width: 70px;
-        }
-
-        .sidebar-header {
-            padding: 0 20px 20px 20px;
-            display: flex;
+            justify-content: center;
             align-items: center;
-            gap: 10px;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-            margin-bottom: 20px;
+            min-height: 100vh;
+            margin: 0;
+            padding: 30px;
+            overflow-x: hidden;
         }
 
-        .sidebar-header img {
-            width: 30px;
-            height: 30px;
-        }
-
-        .sidebar-header h1 {
-            font-family: 'Montserrat', sans-serif;
-            font-size: 1.2em;
-            white-space: nowrap;
-            opacity: 1;
-            transition: opacity 0.3s ease;
-        }
-
-        .sidebar.collapsed .sidebar-header h1 {
-            opacity: 0;
-            display: none;
-        }
-
-
-        .sidebar-toggle {
-            background: none;
-            border: none;
-            color: var(--text-light);
-            font-size: 1.5em;
-            cursor: pointer;
-            padding: 10px 23px;
-            /* Ajuste para centralizar melhor quando colapsado */
-            text-align: left;
-        }
-
-        .sidebar.collapsed .sidebar-toggle {
-            text-align: center;
-        }
-
-
-        .nav-menu ul {
-            list-style: none;
-        }
-
-        .nav-menu li a {
-            display: flex;
-            align-items: center;
-            padding: 12px 20px;
-            color: var(--text-light);
-            text-decoration: none;
-            font-size: 0.95em;
-            white-space: nowrap;
-            transition: background-color 0.2s ease;
-        }
-
-        .nav-menu li a:hover,
-        .nav-menu li a.active {
-            background-color: rgba(255, 255, 255, 0.15);
-        }
-
-        .nav-menu li a .nav-icon {
-            /* Placeholder for icons */
-            width: 20px;
-            height: 20px;
-            margin-right: 15px;
-            display: inline-block;
-            background-color: var(--accent-color);
-            /* Simula ícone */
-            border-radius: 3px;
-            text-align: center;
-            line-height: 20px;
-            font-size: 0.8em;
-            font-weight: bold;
-        }
-
-        .sidebar.collapsed .nav-menu li a .nav-text {
-            opacity: 0;
-            display: none;
-        }
-
-        .sidebar.collapsed .nav-menu li a .nav-icon {
-            margin-right: 0;
-        }
-
-
-        /* Conteúdo Principal */
-        .main-content {
-            flex-grow: 1;
-            display: flex;
-            flex-direction: column;
-            height: 100vh;
-        }
-
-        /* Cabeçalho Superior */
-        .top-header {
+        .welcome-container {
             background-color: var(--bg-light);
-            padding: 15px 30px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-bottom: 1px solid var(--border-color);
-            box-shadow: var(--shadow-sm);
+            border-radius: var(--border-radius-lg);
+            box-shadow: var(--shadow-lg);
+            padding: 30px 40px;
+            text-align: center;
+            max-width: 900px;
+            width: 100%;
+            position: relative;
+            z-index: 1;
+            margin-bottom: 30px;
         }
 
-        .top-header h2 {
-            font-family: 'Montserrat', sans-serif;
-            font-size: 1.5em;
-            color: var(--primary-color);
-        }
-
-        .user-profile {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .user-profile img {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            background-color: var(--border-color);
-        }
-
-        .user-profile span {
-            font-weight: 500;
-        }
-
-        /* Área do Dashboard */
-        .dashboard-area {
-            flex-grow: 1;
-            padding: 20px 30px;
-            overflow-y: auto;
-            /* Permite scroll se conteúdo exceder */
-        }
-
-        .kpi-cards {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-            gap: 20px;
+        .logo-container {
             margin-bottom: 25px;
-        }
-
-        .kpi-card {
-            background-color: var(--bg-light);
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: var(--shadow-md);
-        }
-
-        .kpi-card h3 {
-            font-size: 0.9em;
-            color: var(--secondary-color);
-            margin-bottom: 8px;
-            text-transform: uppercase;
-        }
-
-        .kpi-card .value {
-            font-size: 2em;
-            font-weight: 700;
-            color: var(--primary-color);
-        }
-
-        .kpi-card .trend {
-            font-size: 0.85em;
-            color: var(--highlight-color);
-        }
-
-        .kpi-card .trend.negative {
-            color: var(--alert-critical-bg);
-        }
-
-
-        .main-dashboard-layout {
-            display: flex;
-            gap: 20px;
-            height: calc(100% - 120px);
-            /* Ajustar conforme altura dos KPIs */
-        }
-
-        .map-section {
-            flex: 3;
-            /* Ocupa mais espaço */
-            background-color: var(--bg-light);
-            border-radius: 8px;
-            box-shadow: var(--shadow-md);
-            padding: 20px;
-            display: flex;
-            flex-direction: column;
-        }
-
-        .map-section h3 {
-            margin-bottom: 15px;
-            color: var(--primary-color);
-        }
-
-        .map-placeholder {
-            flex-grow: 1;
-            background-color: var(--bg-medium);
-            border: 1px dashed var(--border-color);
-            display: grid;
-            /* Alterado para grid */
-            grid-template-columns: repeat(3, 1fr);
-            /* 3 colunas */
-            grid-template-rows: repeat(2, 1fr);
-            /* 2 linhas */
-            gap: 10px;
-            /* Espaço entre as áreas */
-            padding: 10px;
-            border-radius: 6px;
-            cursor: pointer;
-        }
-
-        .map-area {
-            background-color: rgba(26, 188, 156, 0.3);
-            /* Verde água semi-transparente */
-            border: 1px solid var(--highlight-color);
             display: flex;
             justify-content: center;
             align-items: center;
-            text-align: center;
-            font-size: 0.9em;
-            border-radius: 4px;
-            transition: background-color 0.2s ease;
+            gap: 8px;
         }
 
-        .map-area:hover {
-            background-color: rgba(26, 188, 156, 0.5);
+        .logo-icon {
+            font-size: 2.8em;
+            color: var(--highlight-color);
+            /* Cor base */
         }
 
-        .map-area.active {
-            background-color: var(--highlight-color);
-            color: white;
-            font-weight: bold;
-        }
-
-        .map-controls {
-            margin-top: 15px;
-            display: flex;
-            gap: 10px;
-            align-items: center;
-        }
-
-        .map-controls label {
-            font-size: 0.9em;
-        }
-
-        .map-controls input[type="range"] {
-            flex-grow: 1;
-        }
-
-        .map-controls button {
-            padding: 8px 12px;
-            background-color: var(--highlight-color);
-            color: white;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-        }
-
-        .map-controls button:hover {
-            background-color: #16a085;
+        /* Aplicando a animação ao ícone do logo */
+        .logo-icon.pulsing-logo {
+            animation: pulseLogoHeart 2s infinite ease-in-out;
         }
 
 
-        .contextual-panel {
-            flex: 2;
-            /* Ocupa menos espaço */
-            background-color: var(--bg-light);
-            border-radius: 8px;
-            box-shadow: var(--shadow-md);
-            padding: 20px;
-            display: flex;
-            flex-direction: column;
-            overflow-y: auto;
+        .logo-text-group h1 {
+            font-family: var(--font-secondary);
+            font-size: 2.8em;
+            line-height: 1.1;
         }
 
-        .contextual-panel h3 {
-            margin-bottom: 15px;
-            color: var(--primary-color);
-        }
-
-        .contextual-panel .placeholder-text {
-            color: #777;
-            text-align: center;
-            margin-top: 30px;
-            font-style: italic;
-        }
-
-        .contextual-item {
-            border-bottom: 1px solid var(--border-color);
-            padding: 12px 0;
-        }
-
-        .contextual-item:last-child {
-            border-bottom: none;
-        }
-
-        .contextual-item h4 {
-            font-size: 1em;
-            margin-bottom: 5px;
-            color: var(--secondary-color);
-        }
-
-        .contextual-item p {
-            font-size: 0.9em;
-            line-height: 1.5;
-            margin-bottom: 5px;
-        }
-
-        .contextual-item .label {
-            font-weight: 500;
-            color: var(--primary-color);
-        }
-
-        .contextual-item .tag {
-            display: inline-block;
-            padding: 3px 8px;
-            font-size: 0.75em;
-            border-radius: 12px;
-            margin-right: 5px;
-        }
-
-        .tag.critical {
-            background-color: var(--alert-critical-bg);
-            color: white;
-        }
-
-        .tag.warning {
-            background-color: var(--alert-warning-bg);
+        .logo-diagno {
             color: var(--text-dark);
+            font-weight: 500;
         }
 
-        .tag.info {
-            background-color: var(--highlight-color);
-            color: white;
+        .logo-map {
+            color: var(--highlight-color);
+            font-weight: 700;
         }
 
-        .contextual-item button {
-            padding: 6px 10px;
-            font-size: 0.85em;
-            background-color: var(--accent-color);
-            color: white;
+        .welcome-title {
+            font-family: var(--font-secondary);
+            font-size: 2em;
+            color: var(--primary-color);
+            margin-bottom: 15px;
+            font-weight: 600;
+        }
+
+        .welcome-description {
+            color: var(--text-muted);
+            line-height: 1.7;
+            margin-bottom: 30px;
+            font-size: 1.05em;
+            max-width: 650px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .features-highlight {
+            display: flex;
+            justify-content: center;
+            gap: 35px;
+            margin-bottom: 45px;
+            flex-wrap: wrap;
+        }
+
+        .feature-item {
+            text-align: center;
+            opacity: 0.8;
+            transition: opacity 0.3s ease, transform 0.3s ease;
+        }
+
+        .feature-item:hover {
+            opacity: 1;
+            transform: translateY(-3px);
+        }
+
+        .feature-icon {
+            font-size: 2.2em;
+            color: var(--accent-color);
+            margin-bottom: 10px;
+        }
+
+        .feature-text {
+            color: var(--text-muted);
+            font-size: 0.9em;
+            font-weight: 500;
+        }
+
+        .access-cards-container {
+            display: flex;
+            gap: 30px;
+            margin-bottom: 25px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .access-card {
+            flex: 1;
+            min-width: 280px;
+            max-width: 380px;
+            background-color: var(--bg-light);
+            border-radius: var(--border-radius-md);
+            box-shadow: var(--shadow-md);
+            padding: 30px 25px;
+            text-align: center;
+            transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+            border: 1px solid var(--border-color);
+        }
+
+        .access-card:hover {
+            transform: translateY(-6px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .card-icon {
+            font-size: 3.5em;
+            margin-bottom: 20px;
+        }
+
+        .icon-ia {
+            color: var(--highlight-color);
+        }
+
+        .icon-prototype {
+            color: var(--primary-color);
+        }
+
+        .card-title {
+            font-family: var(--font-secondary);
+            font-size: 1.4em;
+            color: var(--primary-color);
+            margin-bottom: 12px;
+            font-weight: 600;
+        }
+
+        .card-description {
+            color: var(--text-muted);
+            line-height: 1.6;
+            margin-bottom: 25px;
+            font-size: 0.95em;
+            min-height: 60px;
+        }
+
+        .access-button {
+            display: inline-block;
+            padding: 14px 30px;
+            border-radius: var(--border-radius-md);
+            font-weight: 500;
+            font-size: 1em;
+            text-decoration: none;
+            color: var(--text-light);
+            transition: background-color 0.3s ease, transform 0.2s ease;
             border: none;
-            border-radius: 4px;
             cursor: pointer;
-            margin-top: 5px;
         }
 
-        .contextual-item button:hover {
-            background-color: #d35400;
+        .access-button:hover {
+            transform: translateY(-2px);
         }
 
-        /* Responsividade básica */
-        @media (max-width: 1200px) {
-            .main-dashboard-layout {
-                flex-direction: column;
-                height: auto;
-                /* Permitir crescimento vertical */
-            }
+        .access-button i {
+            margin-right: 8px;
+        }
 
-            .map-section,
-            .contextual-panel {
-                flex: none;
-                /* Resetar flex grow/shrink */
-                height: auto;
-                /* Altura automática */
-            }
+        .ia-button {
+            background-color: var(--highlight-color);
+        }
 
-            .map-placeholder {
-                min-height: 300px;
-                /* Altura mínima para o mapa em telas menores */
-            }
+        .ia-button:hover {
+            background-color: #0da876;
+        }
+
+        .prototype-button {
+            background-color: var(--primary-color);
+        }
+
+        .prototype-button:hover {
+            background-color: #06486b;
+        }
+
+        .static-model-notice {
+            background-color: rgba(243, 156, 18, 0.1);
+            color: #a16207;
+            border: 1px solid rgba(243, 156, 18, 0.3);
+            padding: 15px 20px;
+            border-radius: var(--border-radius-md);
+            margin: 25px auto;
+            max-width: 700px;
+            font-size: 0.95em;
+            text-align: left;
+        }
+
+        .static-model-notice i {
+            margin-right: 10px;
+            color: var(--warning-color);
+        }
+
+        .prototype-guide {
+            margin-top: 30px;
+            text-align: left;
+            border-top: 1px solid var(--border-color);
+            padding-top: 30px;
+        }
+
+        .prototype-guide h2 {
+            font-family: var(--font-secondary);
+            font-size: 1.6em;
+            color: var(--primary-color);
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        details {
+            background-color: var(--bg-light);
+            border: 1px solid var(--border-color);
+            border-radius: var(--border-radius-sm);
+            margin-bottom: 10px;
+            box-shadow: var(--shadow-sm);
+        }
+
+        summary {
+            padding: 15px 20px;
+            font-weight: 600;
+            color: var(--secondary-color);
+            cursor: pointer;
+            list-style: none;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-family: var(--font-secondary);
+            font-size: 1.05em;
+        }
+
+        summary::-webkit-details-marker {
+            display: none;
+        }
+
+        summary::marker {
+            display: none;
+        }
+
+        summary:after {
+            content: '\f078';
+            font-family: 'Font Awesome 6 Free';
+            font-weight: 900;
+            transition: transform 0.2s ease-in-out;
+            font-size: 0.8em;
+        }
+
+        details[open] summary:after {
+            transform: rotate(-180deg);
+        }
+
+        details[open] summary {
+            background-color: var(--bg-base);
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .details-content {
+            padding: 15px 20px;
+            font-size: 0.95em;
+            line-height: 1.7;
+            color: var(--text-muted);
+        }
+
+        .details-content h5 {
+            font-family: var(--font-secondary);
+            color: var(--primary-color);
+            font-size: 1em;
+            margin-top: 15px;
+            margin-bottom: 8px;
+        }
+
+        .details-content ul {
+            list-style-type: disc;
+            margin-left: 20px;
+            padding-left: 5px;
+        }
+
+        .details-content li {
+            margin-bottom: 6px;
+        }
+
+        .welcome-footer {
+            margin-top: 40px;
+            font-size: 0.85em;
+            color: var(--text-muted);
+            width: 100%;
+            text-align: center;
         }
 
         @media (max-width: 768px) {
-            .sidebar {
-                width: 0;
-                padding: 0;
-                overflow: hidden;
+            .welcome-container {
+                padding: 30px 20px;
             }
 
-            /* Esconder completamente */
-            .sidebar.collapsed {
-                width: 0;
+            .logo-icon {
+                font-size: 2.5em;
             }
 
-            /* Manter escondido */
-            .main-content {
-                margin-left: 0;
+            .logo-text-group h1 {
+                font-size: 2em;
             }
 
-            .top-header h2 {
-                font-size: 1.2em;
+            .welcome-title {
+                font-size: 1.8em;
             }
 
-            .user-profile span {
-                display: none;
+            .welcome-description {
+                font-size: 1em;
             }
 
-            .kpi-cards {
-                grid-template-columns: 1fr;
+            .features-highlight {
+                gap: 20px;
+                margin-bottom: 30px;
             }
 
-            /* Uma coluna em mobile */
-            /* No mobile, o toggle da sidebar precisaria ser movido para o top-header */
+            .feature-icon {
+                font-size: 1.8em;
+            }
+
+            .access-cards-container {
+                flex-direction: column;
+                align-items: center;
+                gap: 20px;
+            }
+
+            .access-card {
+                width: 100%;
+                max-width: 400px;
+            }
+
+            .prototype-guide h2 {
+                font-size: 1.4em;
+            }
+
+            summary {
+                font-size: 1em;
+            }
+
+            .details-content {
+                font-size: 0.9em;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .logo-icon {
+                font-size: 2em;
+            }
+
+            .logo-text-group h1 {
+                font-size: 1.8em;
+            }
+
+            .welcome-title {
+                font-size: 1.5em;
+            }
         }
     </style>
 </head>
 
 <body>
-    <aside class="sidebar" id="sidebar">
-        <div class="sidebar-header">
-            <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgMCA0MCA0MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjQwIiBoZWlnaHQ9IjQwIiByeD0iOCIgZmlsbD0iI0UwRTBFMCIvPgo8cGF0aCBkPSJNMjAgOWMtMS43MiAwLTMuMjg2LjU4OC00LjU5NCAxLjU5TDEzLjYxIDEyLjM4QzE0LjgwNCAxMS4xNDggMTYuMTg2IDEwLjUgMTggMTIuMDQ0VjIwLjYyN0wxMi4yOSA5LjkyOEMxMS45MSAxMC45NjYgMTEuMjY0IDEzLjEyNCAxMC43MDggMTQuNzNDMTAuMTUyIDE2LjMzNiA5LjY5IDE3Ljc2NiA5LjQwMiAxOC44OEM5LjExNCAyMCA4LjY5NiAyMC45MyA4LjM4IDIxLjY0NEM4LjA2MiAyMi43NTggOC4wNjIgMjMuNDcyIDguMzc4IDI0LjQ3NkM4LjY5NiAyNS40OCA5LjExNCAyNi4yMyA5LjQwMiAyNi45NDRDMTEuMTQ2IDMwLjY3NCAxNS4wNzIgMzEgMjAgMzFDMjQuOTI4IDMxIDI4Ljg1NCAzMC42NzQgMzAuNTk4IDI2Ljk0NEMzMC44ODYgMjYuMjMgMzEuMzA0IDI1LjQ4IDMxLjYyMiAyNC40NzZD<y_bin_722>4LjkzOCAyMy40NzIgMzEuOTM4IDIyLjc1OCAzMS42MiAyMS42NDRDNDEuMzA0IDIwLjkzIDMwLjg4NiAyMCAzMC41OTggMTguODhDMzAuMzEgMTcuNzY2IDI5Ljg0OCAxNi4zMzYgMjkuMjkyIDE0LjczQzI4LjczNiAxMy4xMjQgMjguMDkgMTAuOTY2IDI3LjcwMiA5LjkyOEwyMS45NTYgMjAuNjI3VjEyLjA0NEMyMy44MTQgMTAuNSAyNS4xOTYgMTEuMTQ4IDI2LjM5IDEyLjM4TDI0LjU5NCAxMC41OUMyMy4yODYgOS41ODggMjEuNzIgOSAyMCA5WiIgZmlsbD0iIzBBN0Q2MiIvPgo8L3N2Zz4K"
-                alt="Sentinel Logo">
-            <h1>Sentinel</h1>
-        </div>
-        <button class="sidebar-toggle" id="sidebarToggleBtn">
-            <span class="nav-icon">☰</span> <span class="nav-text">Recolher</span>
-        </button>
-        <nav class="nav-menu">
-            <ul>
-                <li><a href="#" class="active"><span class="nav-icon">D</span> <span
-                            class="nav-text">Dashboard</span></a></li>
-                <li><a href="#"><span class="nav-icon">M</span> <span class="nav-text">Exploração Geográfica</span></a>
-                </li>
-                <li><a href="#"><span class="nav-icon">T</span> <span class="nav-text">Análise de Tendências</span></a>
-                </li>
-                <li><a href="#"><span class="nav-icon">C</span> <span class="nav-text">Campanhas (IA)</span></a></li>
-                <li><a href="#"><span class="nav-icon">A</span> <span class="nav-text">Alertas</span></a></li>
-                <li><a href="#"><span class="nav-icon">R</span> <span class="nav-text">Relatórios</span></a></li>
-            </ul>
-        </nav>
-        <div style="margin-top: auto; padding: 0 20px 20px 20px;"> <a href="#"
-                style="display: flex; align-items: center; padding: 12px 0; color: var(--text-light); text-decoration: none; font-size: 0.95em; white-space: nowrap;">
-                <span class="nav-icon" style="margin-right: 15px;">S</span> <span class="nav-text">Configurações</span>
-            </a>
-        </div>
-    </aside>
-
-    <div class="main-content">
-        <header class="top-header">
-            <h2>Painel de Inteligência Epidemiológica</h2>
-            <div class="user-profile">
-                <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgMCA0MCA0MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjQwIiBoZWlnaHQ9IjQwIiByeD0iMjAiIGZpbGw9IiNDNEM0QzQiLz4KPHBhdGggZD0iTTIwIDIxQzIyLjIwOTEgMjEgMjQgMTkuMjA5MSAyNCAxN0MyNCAxNC43OTA5IDIyLjIwOTEgMTMgMjAgMTNDMTcuNzkwOSAxMyAxNiAxNC43OTA5IDE2IDE3QzE2IDE5LjIwOTEgMTcuNzkwOSAyMSAyMCAyMVoiIGZpbGw9IndoaXRlIi8+CjxwYXRoIGQ9Ik0yOC41NzE0IDIyLjVDMjcuMDI5NiAyMi41IDI1LjU1MDcgMjMuMDI4IDI0LjQ4NTggMjQuMDk5OEMyMy40MjA5IDI1LjE3MTcgMjIuNzUgMjYuNjUwNyAyMi43NSAyOEMyMi43NSAyOC40MTQxIDIyLjk4NzEgMjguODE5MyAyMy40MTA3IDI5LjEyMzdDMjMuODM0NCAyOS40MjgxIDI0LjM5MTMgMjkuNjA4MSAyNS4wMDAxIDI5LjYzMzdDMjUuMzQ2MSAyOS42NTAyIDI1LjcwODkgMjkuNTg5OCAyNi4wMjc3IDI5LjQ1NzlDMjYuMzQ2NSAyOS4zMjYxIDI2LjYxNjcgMjkuMTI2IDI2LjgxMTQgMjguODY0NUMyNy4wMDYxIDI4LjYwMyAyNy4xMTg5IDI4LjI5MzIgMjcuMTM4MSAyNy45NzE3QzI3LjE1NzQgMjcuNjUwMSAyNy4wODIyIDI3LjMzNDUgMjYuOTIyIDI3LjA1MDNDMjYuNzYxOSAyNi43NjYxIDI2LjUyNzIgMjYuNTIyIDI2LjIzMDcgMjYuMzM2NkMyNS42Mjg2IDI1Ljk4NTYgMjUgMjUuMjgxMiAyNSAyNC41QzI1IDIzLjgzOTIgMjUuMjM0OCAyMy4yMDUzIDI1LjY0NDkgMjIuNzg4M0MyNi4wNTUgMjIuMzc0MiAyNi42MTE4IDIyLjEzOTcgMjcuMjQ5OSAyMS45OTgzQzI3LjUzNTYgMjEuOTM3NCAyNy44MjYzIDIxLjkxNiAyOC4xMTQyIDIxLjkzNEMyOC40MDIxIDIxLjk1MDIgMjguNjg0IDIyLjAwNTUgMjguOTQxMSAyMi4xMDQyQzMyLjQ0MjggMjMuNDEzMiAzNSAyNi45ODE3IDM1IDI4LNUMzNSAyOC42NzM0IDM0Ljk3MTIgMjguODQzMSAzNC45MTcyIDI5LjAwMDRDMzQuNzY2NyAyOS40MTYyIDM0LjQwNzUgMjkuNzM2NyAzMy45Njg2IDI5LjkzMDNDMzIuMjAyNyAzMS43NzI3IDI3LjA3NDMgMzIgMjAgMzJDMTEuNSAzMiA2LjcxMDI1IDMxLjUzNTIgNi4wNjI1IDI5Ljc1QzUuNzUgMjguODY0NiA1IDI3LjYxNDYgNSAyOEM1IDI2Ljk4MTcgNy41NTcxNiAyMy40MTMyIDEyLjA1ODkgMjIuMDk5OEMxMi4zMTYgMjIuMDA1NSAxMi41OTc5IDIxLjk1MDIgMTIuODg1OCAyMS45MzRDMTMuMTczNyAyMS45MTYgMTMuNDY0NCAyMS45Mzc0IDEzLjc1IDIxLjk5ODNDMTQuMzg4MiAyMi4xMzk3IDE0Ljk0NSAyMi4zNzQyIDE1LjM1NTEgMjIuNzg4M0MxNS43NjUyIDIzLjIwNTMgMTYgMjMuODM5MiAxNiAyNC41QzE2IDI1LjI4MTIgMTUuMzg4NiAyNS45Njg3IDE0Ljc2OTMgMjYuMzM2NkMxMy42MTIzIDI3LjEyNjYgMTMuMDAzMSAyOC41NTQ0IDE0LjQyODYgMjguNUMxNS40NTE2IDI3LjIgMTYuNjY0MiAyNi41IDE4IDI2LjNUMjIgMjYuNUwyMi4wMTk2IDI2LjUwNzFDMjIuMDQ2NiAyNi41MDI0IDIyLjA3NDQgMjYuNDk4MiAyMi4xMDI5IDI2LjQ5NDZDMjIuMzQ3OCAyNi40NTg0IDIyLjc1IDI1LjY0NzEgMjIuNzUgMjQuNUMyMi43NSAyMy4zNTI5IDIzLjM3MDQgMjIuNTQzNiAyNC40ODU4IDI0LjA5OThDMjUuNTUwNyAyMy4wMDIgMjcuMDI5NiAyMi41IDI4LjU3MTQgMjIuNVoiIGZpbGw9IndoaXRlIi8+Cjwvc3ZnPgo="
-                    alt="User Avatar">
-                <span>Dra. Ana</span>
+    <div class="welcome-container">
+        <div class="logo-container">
+            <i class="fas fa-heart-pulse logo-icon pulsing-logo"></i>
+            <div class="logo-text-group">
+                <h1><span class="logo-diagno">Diagno</span><span class="logo-map">Map</span></h1>
             </div>
-        </header>
+        </div>
 
-        <main class="dashboard-area">
-            <section class="kpi-cards">
-                <div class="kpi-card">
-                    <h3>Novos Casos (Hoje)</h3>
-                    <div class="value" id="kpi-novos-casos">12</div>
-                    <div class="trend">+5% vs ontem</div>
-                </div>
-                <div class="kpi-card">
-                    <h3>Alertas Ativos</h3>
-                    <div class="value" id="kpi-alertas-ativos">3</div>
-                    <div class="trend negative">1 novo crítico</div>
-                </div>
-                <div class="kpi-card">
-                    <h3>Campanhas Sugeridas (IA)</h3>
-                    <div class="value" id="kpi-campanhas-sugeridas">2</div>
-                    <div class="trend">Prontas para análise</div>
-                </div>
-                <div class="kpi-card">
-                    <h3>Cobertura Vacinal (Geral)</h3>
-                    <div class="value" id="kpi-cobertura-vacinal">78%</div>
-                    <div class="trend">+0.2% esta semana</div>
-                </div>
-            </section>
+        <h2 class="welcome-title">Inteligência e Ação para a Saúde Municipal</h2>
+        <p class="welcome-description">
+            O DiagnoMap capacita gestores com uma visão unificada e inteligente dos recursos e demandas de saúde,
+            permitindo otimização, identificação proativa de crises e planejamento eficaz.
+        </p>
 
-            <section class="main-dashboard-layout">
-                <div class="map-section">
-                    <h3>Mapa de Calor Georreferenciado</h3>
-                    <div class="map-placeholder" id="mapPlaceholder">
-                        <div class="map-area" data-area-id="norte" data-area-name="Região Norte">Área Norte</div>
-                        <div class="map-area" data-area-id="sul" data-area-name="Região Sul">Área Sul</div>
-                        <div class="map-area" data-area-id="leste" data-area-name="Região Leste">Área Leste</div>
-                        <div class="map-area" data-area-id="oeste" data-area-name="Região Oeste">Área Oeste</div>
-                        <div class="map-area" data-area-id="centro" data-area-name="Região Central">Área Central</div>
-                        <div class="map-area" data-area-id="rural" data-area-name="Zona Rural">Zona Rural</div>
-                    </div>
-                    <div class="map-controls">
-                        <label for="timeSlider">Período:</label>
-                        <input type="range" id="timeSlider" min="1" max="30" value="30">
-                        <button id="btnFullMap">Ver Mapa Detalhado</button>
-                    </div>
-                </div>
+        <div class="features-highlight">
+            <div class="feature-item">
+                <i class="fas fa-brain feature-icon"></i>
+                <span class="feature-text">Análise Preditiva</span>
+            </div>
+            <div class="feature-item">
+                <i class="fas fa-users-cog feature-icon"></i>
+                <span class="feature-text">Otimização de Recursos</span>
+            </div>
+            <div class="feature-item">
+                <i class="fas fa-map-marked-alt feature-icon"></i>
+                <span class="feature-text">Vigilância Ativa</span>
+            </div>
+        </div>
 
-                <aside class="contextual-panel" id="contextualPanel">
-                    <h3>Informações Contextuais</h3>
-                    <div id="panelContent">
-                        <p class="placeholder-text">Selecione uma área no mapa para ver detalhes ou confira os alertas e
-                            sugestões globais abaixo.</p>
-                        <div class="contextual-item">
-                            <span class="tag critical">Alerta</span>
-                            <h4>Aumento de Casos de Dengue</h4>
-                            <p><span class="label">Local:</span> Região Leste</p>
-                            <p>Detectado aumento de 35% nos casos suspeitos de dengue nos últimos 3 dias.</p>
-                            <button>Ver Detalhes do Alerta</button>
-                        </div>
-                        <div class="contextual-item">
-                            <span class="tag info">Sugestão IA</span>
-                            <h4>Campanha Preventiva Gripe</h4>
-                            <p><span class="label">Prioridade:</span> Média</p>
-                            <p>IA sugere iniciar campanha de vacinação contra gripe na Região Central devido à queda de
-                                temperatura prevista.</p>
-                            <button>Planejar Campanha</button>
-                        </div>
-                    </div>
-                </aside>
-            </section>
-        </main>
+        <div class="access-cards-container">
+            <div class="access-card">
+                <i class="fas fa-robot card-icon icon-ia"></i>
+                <h3 class="card-title">Demonstração da IA</h3>
+                <p class="card-description">Veja nossa inteligência artificial em ação, analisando dados e gerando
+                    insights valiosos para a saúde pública.</p>
+                <a href="IA/teste.html" class="access-button ia-button">
+                    <i class="fas fa-cogs"></i> Acessar Demonstração
+                </a>
+            </div>
+            <div class="access-card">
+                <i class="fas fa-desktop card-icon icon-prototype"></i>
+                <h3 class="card-title">Protótipo do Sistema</h3>
+                <p class="card-description">Explore o mockup navegável com todas as funcionalidades da plataforma
+                    DiagnoMap e sua interface intuitiva.</p>
+                <a href="ideias/dashboard.html" class="access-button prototype-button">
+                    <i class="fas fa-th-large"></i> Explorar Protótipo
+                </a>
+            </div>
+        </div>
+
+        <div class="static-model-notice">
+            <p><i class="fas fa-info-circle"></i> <strong>Atenção:</strong> A opção "Explorar Protótipo do Sistema" leva
+                a um modelo de navegação estático (mockup) para demonstração das telas e funcionalidades. As interações
+                com dados e a lógica de IA são simuladas nesta área.</p>
+        </div>
+
+        <section class="prototype-guide">
+            <h2><i class="fas fa-book-open"></i> Guia Rápido do Protótipo DiagnoMap</h2>
+
+            <details>
+                <summary>Dashboard Principal</summary>
+                <div class="details-content">
+                    <p><strong>Objetivo Principal:</strong> Oferecer uma visão geral e imediata dos indicadores chave de
+                        saúde do município, permitindo aos gestores identificar rapidamente áreas de atenção e acessar
+                        módulos específicos para análise aprofundada.</p>
+                    <h5>Principais Componentes e Funcionalidades:</h5>
+                    <ul>
+                        <li>KPI Cards: Exibem métricas importantes como "Novos Casos no Mês", "Oportunidades de
+                            Realocação (IA)", "Alertas Gerais Ativos" e "Campanhas Sugeridas (IA)".</li>
+                        <li>Botões de Ação nos KPIs: Permitem acesso rápido a detalhes em modais.</li>
+                        <li>Mapa Interativo Principal (Leaflet): Permite alternar visualização entre Vigilância
+                            Epidemiológica e Gestão de Recursos Humanos.</li>
+                        <li>Painel Contextual Dinâmico: Exibe informações da área selecionada no mapa.</li>
+                    </ul>
+                    <p><em>Persona Principal: Secretária de Saúde e Coordenador/Analista.</em></p>
+                </div>
+            </details>
+
+            <details>
+                <summary>Vigilância Epidemiológica Detalhada</summary>
+                <div class="details-content">
+                    <p><strong>Objetivo Principal:</strong> Fornecer ferramentas para análise aprofundada de dados
+                        epidemiológicos, acompanhamento de tendências de doenças, distribuição geográfica de casos e
+                        gerenciamento de notificações.</p>
+                    <h5>Principais Componentes e Funcionalidades:</h5>
+                    <ul>
+                        <li>Barra de Filtros Avançados (doença, período, região).</li>
+                        <li>Gráficos de Tendência (Chart.js) para casos e cobertura vacinal.</li>
+                        <li>Mapa de Distribuição Geográfica (Leaflet).</li>
+                        <li>Tabela de Notificações com detalhes em modal.</li>
+                    </ul>
+                    <p><em>Persona Principal: Analista/Epidemiologista.</em></p>
+                </div>
+            </details>
+
+            <details>
+                <summary>Gestão de Recursos Humanos da Saúde</summary>
+                <div class="details-content">
+                    <p><strong>Objetivo Principal:</strong> Oferecer uma visão completa da alocação, disponibilidade e
+                        status dos profissionais de saúde, além de apresentar sugestões de otimização baseadas em IA.
+                    </p>
+                    <h5>Principais Componentes e Funcionalidades:</h5>
+                    <ul>
+                        <li>KPIs de RH (Total, Sobrecarga, Subutilizados, etc.).</li>
+                        <li>Filtros por tipo de profissional, especialidade, unidade.</li>
+                        <li>Mapa de Recursos por Unidade (Leaflet) com indicadores de staffing.</li>
+                        <li>Gráficos de Distribuição e Demanda vs. Capacidade (Chart.js).</li>
+                        <li>Tabela de Quadro de Profissionais com status e ações.</li>
+                        <li>Seção de Otimização Inteligente (IA) com sugestões de remanejamento.</li>
+                        <li>Modal de Detalhes do Profissional.</li>
+                    </ul>
+                    <p><em>Persona Principal: Secretária de Saúde e Coordenador.</em></p>
+                </div>
+            </details>
+
+            <details>
+                <summary>Unidades de Saúde</summary>
+                <div class="details-content">
+                    <p><strong>Objetivo Principal:</strong> Apresentar um catálogo detalhado das unidades de saúde, com
+                        informações sobre capacidade, serviços, performance e necessidades, além de resumos gráficos
+                        rápidos na tela principal.</p>
+                    <h5>Principais Componentes e Funcionalidades:</h5>
+                    <ul>
+                        <li>Filtros por tipo de unidade, região, status.</li>
+                        <li>Layout com Mapa (Leaflet) e Lista de Unidades.</li>
+                        <li>Painel de Resumo Gráfico (ao selecionar unidade): Atendimentos recentes (linha), Tipos de
+                            Atendimento (rosca), Indicador de Tempo de Espera.</li>
+                        <li>Modal de Detalhes Completos da Unidade: Informações gerais, capacidade, RH, serviços,
+                            indicadores de performance com gráficos, alertas.</li>
+                    </ul>
+                    <p><em>Persona Principal: Coordenador e Secretária de Saúde.</em></p>
+                </div>
+            </details>
+
+            <details>
+                <summary>Análises e IA</summary>
+                <div class="details-content">
+                    <p><strong>Objetivo Principal:</strong> Ser um centro para visualização de análises complexas e
+                        resultados de modelos de IA (previsões, segmentações) para decisão estratégica.</p>
+                    <h5>Principais Componentes e Funcionalidades:</h5>
+                    <ul>
+                        <li>Seletor de Modelo/Análise de IA.</li>
+                        <li>Painel de Parâmetros da Análise.</li>
+                        <li>Visualização de Resultados: Gráficos avançados (Chart.js), Mapas Temáticos de IA (Leaflet),
+                            Listas de Fatores de Risco, Interpretação e Recomendações da IA (simuladas).</li>
+                        <li>Exemplos: Previsão de Surtos, Segmentação de Risco, Análise de Filas, Previsão de Demanda.
+                        </li>
+                    </ul>
+                    <p><em>Persona Principal: Analista/Coordenador de Planejamento.</em></p>
+                </div>
+            </details>
+
+            <details>
+                <summary>Campanhas de Saúde</summary>
+                <div class="details-content">
+                    <p><strong>Objetivo Principal:</strong> Gerenciar o ciclo de vida das campanhas de saúde pública,
+                        desde o planejamento (incluindo sugestões da IA) até o acompanhamento e visualização de
+                        resultados.</p>
+                    <h5>Principais Componentes e Funcionalidades:</h5>
+                    <ul>
+                        <li>Painel de Campanhas: Destaque para Ativas (com mini gráfico de progresso), Planejadas,
+                            Sugestões da IA, Histórico.</li>
+                        <li>Modal de Detalhes/Criação/Planejamento: Informações básicas, público-alvo, metas, período,
+                            status, justificativa da IA (para sugestões), Plano de Ações detalhado (com descrição,
+                            prazo, responsável, status), mapa de foco, gráfico de progresso.</li>
+                    </ul>
+                    <p><em>Persona Principal: Secretária de Saúde e Coordenador.</em></p>
+                </div>
+            </details>
+
+            <details>
+                <summary>Alertas Críticos</summary>
+                <div class="details-content">
+                    <p><strong>Objetivo Principal:</strong> Centralizar a visualização, triagem, atribuição e
+                        acompanhamento de todos os alertas críticos para garantir resposta rápida.</p>
+                    <h5>Principais Componentes e Funcionalidades:</h5>
+                    <ul>
+                        <li>KPIs de Alertas (Críticos Abertos, Total Abertos).</li>
+                        <li>Botão para Modal de Filtros Avançados.</li>
+                        <li>Seção de "Alertas Críticos Prioritários" com cards visuais.</li>
+                        <li>Lista Completa de Alertas (tabela com ordenação e paginação) exibida após filtros.</li>
+                        <li>Modal de Detalhes do Alerta: Informações completas, dados observados, ações recomendadas
+                            pela IA, gerenciamento de status e responsável.</li>
+                    </ul>
+                    <p><em>Persona Principal: Analista/Triagem e Secretária de Saúde.</em></p>
+                </div>
+            </details>
+
+            <details>
+                <summary>Relatórios</summary>
+                <div class="details-content">
+                    <p><strong>Objetivo Principal:</strong> Permitir a geração e visualização de relatórios gerenciais
+                        consolidados para análise, prestação de contas e suporte à decisão.</p>
+                    <h5>Principais Componentes e Funcionalidades:</h5>
+                    <ul>
+                        <li>Layout de duas colunas: Painel de parâmetros e Painel de visualização.</li>
+                        <li>Seleção de Tipo de Relatório e Parâmetros Dinâmicos.</li>
+                        <li>Área de Pré-Visualização: Texto, tabelas e gráficos de tendência (Chart.js).</li>
+                        <li>Botões de Ação: Imprimir, Exportar CSV/PDF (simulados).</li>
+                        <li>Exemplos: Rel. Epidemiológico, Produtividade, RH, Cobertura Vacinal.</li>
+                    </ul>
+                    <p><em>Persona Principal: Analista e Secretária de Saúde.</em></p>
+                </div>
+            </details>
+
+        </section>
+
+        <footer class="welcome-footer">
+            <p>&copy; 2025 DiagnoMap. Desenvolvido para o Hackathon Saúde Inteligente.</p>
+        </footer>
     </div>
 
     <script>
-        // Dados simulados para o painel contextual
-        const areaData = {
-            norte: {
-                name: "Região Norte",
-                stats: "Casos Ativos: 45 | Incidência: 120/100k",
-                trend: "Estável nos últimos 7 dias.",
-                alerts: [{ type: "warning", title: "Atenção: Baixa adesão à vacina X", details: "Apenas 40% da meta atingida." }],
-                campaigns: [{ title: "Reforço Vacina X", details: "Intensificar divulgação na mídia local." }]
-            },
-            sul: {
-                name: "Região Sul",
-                stats: "Casos Ativos: 22 | Incidência: 60/100k",
-                trend: "Redução de 10% nos casos.",
-                alerts: [],
-                campaigns: []
-            },
-            leste: {
-                name: "Região Leste",
-                stats: "Casos Ativos: 89 | Incidência: 250/100k",
-                trend: "Aumento crítico de 35% (Dengue).",
-                alerts: [{ type: "critical", title: "Surto de Dengue", details: "Aumento de 35% em 3 dias. Ações emergenciais necessárias." }],
-                campaigns: [{ title: "Combate ao Mosquito", details: "Foco em mutirões de limpeza e nebulização." }]
-            },
-            oeste: {
-                name: "Região Oeste",
-                stats: "Casos Ativos: 30 | Incidência: 90/100k",
-                trend: "Leve aumento de 5%.",
-                alerts: [],
-                campaigns: [{ title: "Prevenção Doenças Respiratórias", details: "Distribuir máscaras e álcool gel em postos." }]
-            },
-            centro: {
-                name: "Região Central",
-                stats: "Casos Ativos: 15 | Incidência: 50/100k",
-                trend: "Estável.",
-                alerts: [],
-                campaigns: [{ title: "Campanha Vacinação Gripe", details: "Focar em idosos e grupos de risco." }]
-            },
-            rural: {
-                name: "Zona Rural",
-                stats: "Casos Ativos: 8 | Incidência: 30/100k",
-                trend: "Estável.",
-                alerts: [{ type: "info", title: "Verificar Posto Remoto", details: "Checar estoque de medicamentos no Posto Rural Alfa." }],
-                campaigns: []
-            }
-        };
-
-        // Elementos do DOM
-        const sidebar = document.getElementById('sidebar');
-        const sidebarToggleBtn = document.getElementById('sidebarToggleBtn');
-        const navTextElements = sidebar.querySelectorAll('.nav-text');
-        const sidebarToggleText = sidebarToggleBtn.querySelector('.nav-text');
-
-        const mapAreas = document.querySelectorAll('.map-area');
-        const contextualPanel = document.getElementById('panelContent');
-        const kpiNovosCasos = document.getElementById('kpi-novos-casos');
-
-        // Funcionalidade da Sidebar
-        sidebarToggleBtn.addEventListener('click', () => {
-            sidebar.classList.toggle('collapsed');
-            if (sidebar.classList.contains('collapsed')) {
-                sidebarToggleText.textContent = ''; // Ou um ícone diferente
-            } else {
-                sidebarToggleText.textContent = 'Recolher';
-            }
-        });
-
-        // Funcionalidade do Mapa Interativo (Simulado)
-        mapAreas.forEach(area => {
-            area.addEventListener('click', () => {
-                // Remove a classe 'active' de todas as áreas
-                mapAreas.forEach(a => a.classList.remove('active'));
-                // Adiciona 'active' à área clicada
-                area.classList.add('active');
-
-                const areaId = area.dataset.areaId;
-                const data = areaData[areaId];
-                updateContextualPanel(data);
-            });
-        });
-
-        function updateContextualPanel(data) {
-            if (!data) {
-                contextualPanel.innerHTML = `<p class="placeholder-text">Dados não encontrados para esta área.</p>`;
-                return;
-            }
-
-            let html = `<h3>${data.name}</h3>`;
-            html += `<div class="contextual-item">
-                        <p><span class="label">Estatísticas:</span> ${data.stats}</p>
-                        <p><span class="label">Tendência:</span> ${data.trend}</p>
-                    </div>`;
-
-            if (data.alerts && data.alerts.length > 0) {
-                html += `<h4>Alertas Relevantes:</h4>`;
-                data.alerts.forEach(alert => {
-                    html += `<div class="contextual-item">
-                                <span class="tag ${alert.type}">${alert.type.charAt(0).toUpperCase() + alert.type.slice(1)}</span>
-                                <h5>${alert.title}</h5>
-                                <p>${alert.details}</p>
-                                <button>Ver Detalhes do Alerta</button>
-                             </div>`;
-                });
-            } else {
-                html += `<div class="contextual-item"><p>Nenhum alerta específico para esta região.</p></div>`
-            }
-
-            if (data.campaigns && data.campaigns.length > 0) {
-                html += `<h4>Sugestões de Campanhas (IA):</h4>`;
-                data.campaigns.forEach(campaign => {
-                    html += `<div class="contextual-item">
-                                <h5>${campaign.title}</h5>
-                                <p>${campaign.details}</p>
-                                <button>Planejar Campanha</button>
-                             </div>`;
-                });
-            } else {
-                html += `<div class="contextual-item"><p>Nenhuma sugestão de campanha específica para esta região.</p></div>`
-            }
-            contextualPanel.innerHTML = html;
-        }
-
-        // Simular atualização de KPI (exemplo)
-        setInterval(() => {
-            const randomChange = Math.floor(Math.random() * 5) - 2; // -2 a +2
-            let currentCases = parseInt(kpiNovosCasos.textContent);
-            currentCases = Math.max(0, currentCases + randomChange); // Evitar negativos
-            kpiNovosCasos.textContent = currentCases;
-        }, 5000);
-
+        // Script para o coração pulsante de fundo, se necessário, ou outras interatividades.
+        // A animação principal é CSS.
     </script>
 </body>
 

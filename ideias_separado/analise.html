@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestor Saúde ProAtivo - Análises e IA</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&family=Montserrat:wght@600;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+        integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="analise.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+    <script src="analise.js"></script>
+</head>
+
+<body>
+    <aside class="sidebar">
+        <div class="logo">Gestor Saúde<br>ProAtivo</div>
+        <nav>
+            <ul>
+                <li><a href="#" onclick="alert('Redirecionando para Dashboard Principal')"><i class="fas fa-home"></i>
+                        Dashboard</a></li>
+                <li><a href="#" onclick="alert('Redirecionando para Vigilância Epidemiológica')"><i
+                            class="fas fa-chart-line"></i> Vigilância Epidemiológica</a></li>
+                <li><a href="#" onclick="alert('Redirecionando para Gestão de Recursos')"><i
+                            class="fas fa-users-medical"></i> Gestão de Recursos</a></li>
+                <li class="active"><a href="#"><i class="fas fa-brain"></i> Análises e IA</a></li>
+                <li><a href="#" onclick="alert('Redirecionando para Unidades de Saúde')"><i class="fas fa-hospital"></i>
+                        Unidades de Saúde</a></li>
+                <li><a href="#" onclick="alert('Redirecionando para Campanhas')"><i class="fas fa-bullhorn"></i>
+                        Campanhas</a></li>
+                <li><a href="#" onclick="alert('Redirecionando para Alertas Críticos')"><i class="fas fa-bell"></i>
+                        Alertas Críticos</a></li>
+                <li><a href="#" onclick="alert('Redirecionando para Relatórios')"><i class="fas fa-file-alt"></i>
+                        Relatórios</a></li>
+                <li><a href="#" onclick="alert('Redirecionando para Configurações')"><i class="fas fa-cog"></i>
+                        Configurações</a></li>
+            </ul>
+        </nav>
+    </aside>
+
+    <main class="main-content">
+        <header class="header">
+            <h1>Análises e IA</h1>
+            <div class="user-profile">
+                <span>Olá, Dr. Silva</span>
+                <img src="https://via.placeholder.com/40" alt="Avatar do Usuário">
+            </div>
+        </header>
+
+        <div class="kpi-grid">
+            <div class="kpi-card positive">
+                <div class="value" id="kpi-risco-baixo">82%</div>
+                <div class="label">Risco de Surtos (Baixo)</div>
+            </div>
+            <div class="kpi-card negative">
+                <div class="value" id="kpi-sobrecarga-unidades">3</div>
+                <div class="label">Unidades com Sobrecarga Prevista</div>
+            </div>
+            <div class="kpi-card neutral">
+                <div class="value" id="kpi-otimizacao-recursos">15%</div>
+                <div class="label">Potencial Otimização de Recursos</div>
+            </div>
+            <div class="kpi-card positive">
+                <div class="value" id="kpi-eficiencia-campanhas">92%</div>
+                <div class="label">Eficiência de Campanhas (Média)</div>
+            </div>
+        </div>
+
+        <div class="dashboard-grid">
+            <div class="card">
+                <h2>Projeção de Casos Futuros</h2>
+                <div class="chart-container">
+                    <canvas id="projecaoCasosChart"></canvas>
+                </div>
+                <p>Projeção de casos ativos de doenças respiratórias para as próximas 4 semanas na região metropolitana.
+                </p>
+            </div>
+
+            <div class="card">
+                <h2>Risco de Propagação por Região (IA)</h2>
+                <div class="chart-container">
+                    <canvas id="riscoPropagacaoChart"></canvas>
+                </div>
+                <p>Identificação de áreas com maior probabilidade de surtos com base em dados de mobilidade e saúde
+                    pública.</p>
+            </div>
+        </div>
+
+        <section class="ai-insights-section">
+            <div class="ai-recommendation-card">
+                <h3>Recomendação da IA: Alocação de Equipes</h3>
+                <p>A IA sugere alocar 5 enfermeiros adicionais para a Unidade de Saúde Leste 1 nos próximos 7 dias,
+                    devido a um aumento projetado de 20% na demanda por atendimentos de emergência.</p>
+                <button class="action-button" onclick="alert('Simular alocação de equipes na Unidade Leste 1')">
+                    <i class="fas fa-cogs"></i> Simular Ação
+                </button>
+            </div>
+
+            <div class="ai-recommendation-card">
+                <h3>Recomendação da IA: Campanha Preventiva</h3>
+                <p>Identificado um padrão de alta incidência de casos de dengue em bairros específicos da Região Sul.
+                    Recomendamos iniciar uma campanha de conscientização e mutirão de limpeza direcionada para essas
+                    áreas.</p>
+                <button class="action-button" onclick="alert('Visualizar detalhes da campanha sugerida')">
+                    <i class="fas fa-eye"></i> Ver Campanha Sugerida
+                </button>
+            </div>
+
+            <div class="ai-recommendation-card">
+                <h3>Anomalia Detectada: Queda na Vacinação</h3>
+                <p>Houve uma queda de 15% na taxa de vacinação infantil na área central no último mês, um desvio
+                    significativo do padrão. A IA sugere investigar os motivos e planejar ações corretivas.</p>
+                <button class="action-button" onclick="alert('Investigar detalhes da queda na vacinação')">
+                    <i class="fas fa-search"></i> Investigar Anomalia
+                </button>
+            </div>
+
+            <div class="ai-recommendation-card">
+                <h3>Previsão de Ocupação de Leitos</h3>
+                <p>A previsão para as próximas 48 horas indica que a ocupação de leitos de UTI na Unidade de Saúde
+                    Central pode atingir 95%. Considere planos de contingência ou transferência de pacientes.</p>
+                <button class="action-button" onclick="alert('Ver detalhes da ocupação de leitos')">
+                    <i class="fas fa-bed"></i> Detalhes de Leitos
+                </button>
+            </div>
+        </section>
+
+        <div class="simulation-tool card">
+            <h2>Ferramenta de Simulação de Impacto</h2>
+            <p>Ajuste os parâmetros abaixo para simular o impacto de diferentes cenários na rede de saúde.</p>
+
+            <div class="input-group">
+                <label for="simulacao-impacto-doenca">Tipo de Evento/Doença:</label>
+                <select id="simulacao-impacto-doenca">
+                    <option value="dengue">Dengue</option>
+                    <option value="covid">COVID-19</option>
+                    <option value="gripe">Gripe Sazonal</option>
+                    <option value="acidente">Acidente em Massa</option>
+                </select>
+            </div>
+
+            <div class="input-group">
+                <label for="simulacao-impacto-escala">Escala do Evento (% de aumento): <span
+                        id="simulacao-escala-valor">50</span>%</label>
+                <div class="slider-container">
+                    <input type="range" id="simulacao-impacto-escala" min="10" max="200" value="50">
+                    <input type="number" id="simulacao-impacto-escala-num" min="10" max="200" value="50">
+                </div>
+            </div>
+
+            <div class="input-group">
+                <label for="simulacao-impacto-duracao">Duração Prevista (dias):</label>
+                <select id="simulacao-impacto-duracao">
+                    <option value="7">7 Dias</option>
+                    <option value="15">15 Dias</option>
+                    <option value="30">30 Dias</option>
+                    <option value="60">60 Dias</option>
+                </select>
+            </div>
+
+            <button id="runSimulationBtn"><i class="fas fa-flask"></i> Rodar Simulação</button>
+
+            <div id="simulationResult" style="display: none;">
+                <h3>Resultado da Simulação:</h3>
+                <p id="result-leitos"></p>
+                <p id="result-profissionais"></p>
+                <p id="result-custo"></p>
+                <p id="result-recomendacao"></p>
+            </div>
+        </div>
+
+    </main>
+</body>
+
+</html>

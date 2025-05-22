@@ -1,0 +1,1668 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestor Saúde ProAtivo - Dashboard Principal</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&family=Montserrat:wght@600;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+        integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+        integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+        integrity="sha256-20n5Hj4XA/M3EKQ+1Myl5b3/eA4on/r/yX+hY4B9jY4=" crossorigin=""></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/waypoints/4.0.1/jquery.waypoints.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Counter-Up/1.0.0/jquery.counterup.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <style>
+        :root {
+            --primary-color: #0A3D62;
+            /* Azul Petróleo */
+            --secondary-color: #2C3E50;
+            /* Azul Escuro */
+            --accent-color: #3498DB;
+            /* Azul vibrante para botões/links */
+            --background-color: #F8F9FA;
+            /* Fundo claro */
+            --card-background: #FFFFFF;
+            /* Fundo dos cards */
+            --text-color: #333333;
+            /* Cor geral do texto */
+            --light-text-color: #666666;
+            /* Cor para textos secundários */
+            --border-color: #E0E0E0;
+            /* Cor das bordas */
+            --success-color: #2ECC71;
+            /* Verde para sucesso/positivo */
+            --danger-color: #E74C3C;
+            /* Vermelho para perigo/negativo */
+            --warning-color: #F39C12;
+            /* Laranja para aviso */
+            --info-color: #3498DB;
+            /* Azul para informação */
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            color: var(--text-color);
+            background-color: var(--background-color);
+            display: flex;
+            min-height: 100vh;
+            overflow-x: hidden;
+            font-size: 14px;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 250px;
+            background-color: var(--secondary-color);
+            color: white;
+            padding: 20px 0;
+            display: flex;
+            flex-direction: column;
+            transition: width 0.3s ease;
+            box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+            position: fixed;
+            height: 100%;
+            z-index: 1000;
+        }
+
+        .sidebar.collapsed {
+            width: 80px;
+        }
+
+        .sidebar-header {
+            display: flex;
+            align-items: center;
+            padding: 0 20px;
+            margin-bottom: 30px;
+        }
+
+        .sidebar.collapsed .sidebar-header {
+            justify-content: center;
+        }
+
+        .logo-icon {
+            font-size: 28px;
+            color: var(--accent-color);
+            margin-right: 10px;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+
+        .logo-icon:hover {
+            transform: scale(1.1);
+        }
+
+        .sidebar.collapsed .logo-icon {
+            margin-right: 0;
+        }
+
+        .sidebar-header h1 {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 18px;
+            font-weight: 700;
+            color: white;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .sidebar.collapsed .sidebar-header h1 {
+            display: none;
+        }
+
+        .sidebar-header .proativo {
+            color: var(--accent-color);
+            font-weight: 700;
+        }
+
+        .nav-menu ul {
+            list-style: none;
+        }
+
+        .nav-menu li a {
+            display: flex;
+            align-items: center;
+            padding: 12px 20px;
+            color: rgba(255, 255, 255, 0.8);
+            text-decoration: none;
+            transition: background-color 0.2s ease, color 0.2s ease;
+        }
+
+        .nav-menu li a:hover,
+        .nav-menu li a.active {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .nav-icon {
+            font-size: 18px;
+            margin-right: 15px;
+            width: 20px;
+            text-align: center;
+        }
+
+        .sidebar.collapsed .nav-icon {
+            margin-right: 0;
+        }
+
+        .nav-text {
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            opacity: 1;
+            transition: opacity 0.3s ease, width 0.3s ease;
+        }
+
+        .sidebar.collapsed .nav-text {
+            opacity: 0;
+            width: 0;
+            display: none;
+        }
+
+        /* Main Content */
+        .main-content {
+            flex-grow: 1;
+            padding: 20px;
+            margin-left: 250px;
+            transition: margin-left 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            /* Para o painel de insights */
+        }
+
+        .sidebar.collapsed+.main-content {
+            margin-left: 80px;
+        }
+
+        /* Header Principal */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 0;
+            margin-bottom: 20px;
+            background-color: var(--background-color);
+            z-index: 999;
+            width: calc(100% - 250px);
+            position: sticky;
+            top: 0;
+            transition: width 0.3s ease, left 0.3s ease;
+            left: 250px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        }
+
+        .sidebar.collapsed+.main-content .header {
+            width: calc(100% - 80px);
+            left: 80px;
+        }
+
+        .header h2 {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 24px;
+            color: var(--primary-color);
+        }
+
+        .header-actions {
+            display: flex;
+            align-items: center;
+        }
+
+        .header-actions .icon-button {
+            background: none;
+            border: none;
+            color: var(--light-text-color);
+            font-size: 18px;
+            margin-left: 20px;
+            cursor: pointer;
+            transition: color 0.2s ease, transform 0.2s ease;
+            position: relative;
+        }
+
+        .header-actions .icon-button:hover {
+            color: var(--primary-color);
+            transform: translateY(-2px);
+        }
+
+        .header-actions .profile-picture {
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            background-color: var(--accent-color);
+            margin-left: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            color: white;
+            cursor: pointer;
+        }
+
+        .notification-badge {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background-color: var(--danger-color);
+            color: white;
+            font-size: 10px;
+            border-radius: 50%;
+            padding: 3px 6px;
+            animation: pulse 1.5s infinite;
+        }
+
+        @keyframes pulse {
+            0% {
+                box-shadow: 0 0 0 0 rgba(231, 76, 60, 0.7);
+            }
+
+            70% {
+                box-shadow: 0 0 0 10px rgba(231, 76, 60, 0);
+            }
+
+            100% {
+                box-shadow: 0 0 0 0 rgba(231, 76, 60, 0);
+            }
+        }
+
+        /* Dashboard Content */
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .kpi-card {
+            background-color: var(--card-background);
+            border-radius: 8px;
+            padding: 25px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            overflow: hidden;
+            position: relative;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            border-left: 5px solid transparent;
+        }
+
+        .kpi-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.12);
+        }
+
+        .kpi-card.positive {
+            border-left-color: var(--success-color);
+        }
+
+        .kpi-card.negative {
+            border-left-color: var(--danger-color);
+        }
+
+        .kpi-card.neutral {
+            border-left-color: var(--info-color);
+        }
+
+
+        .kpi-card h3 {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 16px;
+            color: var(--primary-color);
+            margin-bottom: 10px;
+        }
+
+        .kpi-card .value {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 32px;
+            font-weight: 700;
+            color: var(--text-color);
+            display: flex;
+            align-items: center;
+        }
+
+        .kpi-card .value .unit {
+            font-size: 16px;
+            font-weight: 400;
+            margin-left: 5px;
+            color: var(--light-text-color);
+        }
+
+        .kpi-card .trend {
+            display: flex;
+            align-items: center;
+            font-size: 14px;
+            margin-top: 5px;
+        }
+
+        .kpi-card .trend i {
+            margin-right: 5px;
+            font-size: 12px;
+        }
+
+        .kpi-card .trend.up {
+            color: var(--success-color);
+        }
+
+        .kpi-card .trend.down {
+            color: var(--danger-color);
+        }
+
+        .kpi-card .trend.neutral {
+            color: var(--light-text-color);
+        }
+
+
+        /* Map Section */
+        .map-section {
+            background-color: var(--card-background);
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            padding: 20px;
+            margin-bottom: 20px;
+            height: 500px;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .map-section h3 {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 18px;
+            color: var(--primary-color);
+            margin-bottom: 15px;
+        }
+
+        #mapid {
+            flex-grow: 1;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        /* Contextual Panel */
+        .contextual-panel {
+            background-color: var(--card-background);
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            padding: 20px;
+            position: absolute;
+            right: 20px;
+            top: 100px;
+            /* Ajustar conforme a altura do header */
+            width: 350px;
+            max-height: calc(100vh - 120px);
+            overflow-y: auto;
+            transform: translateX(120%);
+            /* Escondido à direita */
+            transition: transform 0.4s ease-out;
+            z-index: 900;
+        }
+
+        .contextual-panel.active {
+            transform: translateX(0);
+        }
+
+        .contextual-panel h4 {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 18px;
+            color: var(--primary-color);
+            margin-bottom: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .contextual-panel h4 .close-panel {
+            background: none;
+            border: none;
+            font-size: 20px;
+            color: var(--light-text-color);
+            cursor: pointer;
+            transition: color 0.2s ease;
+        }
+
+        .contextual-panel h4 .close-panel:hover {
+            color: var(--danger-color);
+        }
+
+        .contextual-panel p {
+            margin-bottom: 10px;
+            line-height: 1.6;
+        }
+
+        .contextual-panel .detail-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            padding-bottom: 5px;
+            border-bottom: 1px dotted var(--border-color);
+        }
+
+        .contextual-panel .detail-item strong {
+            color: var(--primary-color);
+        }
+
+        .contextual-panel .detail-item span {
+            color: var(--light-text-color);
+        }
+
+        .contextual-panel .actions {
+            margin-top: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .contextual-panel .btn {
+            background-color: var(--accent-color);
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            text-align: center;
+            text-decoration: none;
+            transition: background-color 0.2s ease, transform 0.2s ease;
+        }
+
+        .contextual-panel .btn:hover {
+            background-color: #2980b9;
+            transform: translateY(-2px);
+        }
+
+        .placeholder-text {
+            color: var(--light-text-color);
+            text-align: center;
+            padding: 50px 20px;
+            font-style: italic;
+        }
+
+        /* Alerts & Insights Panel (Lateral Right) */
+        .alerts-insights-panel {
+            background-color: var(--card-background);
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            width: 320px;
+            max-height: calc(100vh - 40px);
+            /* Ajusta a altura para ficar dentro da viewport */
+            overflow-y: auto;
+            position: fixed;
+            right: 20px;
+            top: 20px;
+            z-index: 950;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .alerts-insights-panel h4 {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 18px;
+            color: var(--primary-color);
+            margin-bottom: 10px;
+        }
+
+        .alert-card,
+        .insight-card {
+            background-color: var(--background-color);
+            border-radius: 6px;
+            padding: 15px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            border-left: 4px solid transparent;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            cursor: pointer;
+        }
+
+        .alert-card:hover,
+        .insight-card:hover {
+            transform: translateX(3px);
+            box-shadow: 0 3px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .alert-card.critical {
+            border-left-color: var(--danger-color);
+        }
+
+        .alert-card.warning {
+            border-left-color: var(--warning-color);
+        }
+
+        .insight-card {
+            border-left-color: var(--info-color);
+        }
+
+        .alert-card i,
+        .insight-card i {
+            font-size: 20px;
+            min-width: 20px;
+            text-align: center;
+            padding-top: 3px;
+        }
+
+        .alert-card.critical i {
+            color: var(--danger-color);
+            animation: pulse-icon 1.5s infinite;
+        }
+
+        .alert-card.warning i {
+            color: var(--warning-color);
+        }
+
+        .insight-card i {
+            color: var(--info-color);
+        }
+
+        @keyframes pulse-icon {
+            0% {
+                opacity: 1;
+            }
+
+            50% {
+                opacity: 0.5;
+            }
+
+            100% {
+                opacity: 1;
+            }
+        }
+
+        .alert-content,
+        .insight-content {
+            flex-grow: 1;
+        }
+
+        .alert-content h5,
+        .insight-content h5 {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 14px;
+            margin-bottom: 5px;
+            color: var(--text-color);
+        }
+
+        .alert-content p,
+        .insight-content p {
+            font-size: 12px;
+            color: var(--light-text-color);
+        }
+
+        .alert-time {
+            font-size: 10px;
+            color: var(--light-text-color);
+            text-align: right;
+            margin-top: 5px;
+        }
+
+        /* Charts Section */
+        .charts-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .chart-card {
+            background-color: var(--card-background);
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            padding: 20px;
+            height: 350px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .chart-card h3 {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 16px;
+            color: var(--primary-color);
+            margin-bottom: 15px;
+        }
+
+        .chart-container {
+            flex-grow: 1;
+            position: relative;
+            /* Necessário para Chart.js responsive */
+        }
+
+
+        /* Modal Overlay */
+        .modal-overlay {
+            display: none;
+            /* Hidden by default */
+            position: fixed;
+            /* Stay in place */
+            z-index: 1001;
+            /* Sit on top */
+            left: 0;
+            top: 0;
+            width: 100%;
+            /* Full width */
+            height: 100%;
+            /* Full height */
+            overflow: auto;
+            /* Enable scroll if needed */
+            background-color: rgba(0, 0, 0, 0.5);
+            /* Black w/ opacity */
+            justify-content: center;
+            align-items: center;
+            animation: fadeIn 0.3s forwards;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background-color: var(--card-background);
+            margin: auto;
+            padding: 30px;
+            border-radius: 10px;
+            width: 90%;
+            max-width: 600px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            position: relative;
+            animation: slideIn 0.3s forwards;
+        }
+
+        .modal-content .close-button {
+            color: var(--light-text-color);
+            font-size: 28px;
+            position: absolute;
+            top: 15px;
+            right: 20px;
+            cursor: pointer;
+            transition: color 0.2s ease;
+        }
+
+        .modal-content .close-button:hover {
+            color: var(--danger-color);
+        }
+
+        .modal-content h2 {
+            font-family: 'Montserrat', sans-serif;
+            color: var(--primary-color);
+            margin-bottom: 20px;
+            font-size: 24px;
+        }
+
+        .modal-content p {
+            margin-bottom: 10px;
+            line-height: 1.6;
+        }
+
+        .modal-content .modal-actions {
+            margin-top: 25px;
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+        }
+
+        .modal-content .modal-actions .btn {
+            background-color: var(--accent-color);
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 15px;
+            transition: background-color 0.2s ease, transform 0.2s ease;
+        }
+
+        .modal-content .modal-actions .btn:hover {
+            background-color: #2980b9;
+            transform: translateY(-2px);
+        }
+
+        .modal-content .modal-actions .btn.secondary {
+            background-color: var(--light-text-color);
+        }
+
+        .modal-content .modal-actions .btn.secondary:hover {
+            background-color: #888;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+
+            to {
+                opacity: 1;
+            }
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateY(-50px);
+                opacity: 0;
+            }
+
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+
+        /* Responsividade */
+        @media (max-width: 1024px) {
+            .sidebar {
+                width: 80px;
+            }
+
+            .main-content {
+                margin-left: 80px;
+            }
+
+            .header {
+                width: calc(100% - 80px);
+                left: 80px;
+            }
+
+            .sidebar-header h1,
+            .nav-text {
+                display: none;
+            }
+
+            .logo-icon {
+                margin-right: 0;
+            }
+
+            .sidebar.collapsed {
+                width: 250px;
+            }
+
+            .sidebar.collapsed .sidebar-header h1,
+            .sidebar.collapsed .nav-text {
+                display: block;
+            }
+
+            .sidebar.collapsed .logo-icon {
+                margin-right: 10px;
+            }
+
+            .contextual-panel {
+                width: 300px;
+                right: 10px;
+                max-height: calc(100vh - 80px);
+            }
+
+            .alerts-insights-panel {
+                width: 280px;
+                right: 10px;
+            }
+
+            .dashboard-grid {
+                grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            }
+        }
+
+        @media (max-width: 768px) {
+            body {
+                flex-direction: column;
+            }
+
+            .sidebar {
+                width: 100%;
+                height: auto;
+                position: relative;
+                box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+                padding: 10px 0;
+            }
+
+            .sidebar-header {
+                justify-content: center;
+                margin-bottom: 10px;
+            }
+
+            .sidebar-header h1 {
+                display: block;
+            }
+
+            .sidebar.collapsed {
+                width: 100%;
+            }
+
+            .sidebar.collapsed .sidebar-header h1,
+            .sidebar.collapsed .nav-text {
+                display: block;
+            }
+
+            .sidebar.collapsed .logo-icon {
+                margin-right: 10px;
+            }
+
+
+            .nav-menu ul {
+                display: flex;
+                justify-content: space-around;
+                flex-wrap: wrap;
+            }
+
+            .nav-menu li a {
+                padding: 8px 15px;
+                flex-direction: column;
+                text-align: center;
+                border-radius: 5px;
+            }
+
+            .nav-icon {
+                margin-right: 0;
+                margin-bottom: 5px;
+            }
+
+            .nav-text {
+                font-size: 12px;
+            }
+
+            .main-content {
+                margin-left: 0;
+                padding: 15px;
+            }
+
+            .header {
+                position: relative;
+                width: 100%;
+                left: 0;
+                padding: 10px 0;
+                flex-wrap: wrap;
+                justify-content: center;
+                text-align: center;
+                margin-bottom: 15px;
+            }
+
+            .header h2 {
+                width: 100%;
+                margin-bottom: 10px;
+            }
+
+            .header-actions {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .header-actions .icon-button,
+            .header-actions .profile-picture {
+                margin: 0 10px;
+            }
+
+            .contextual-panel,
+            .alerts-insights-panel {
+                position: relative;
+                width: 100%;
+                right: 0;
+                top: auto;
+                margin-top: 20px;
+                transform: translateX(0);
+            }
+
+            .dashboard-grid,
+            .charts-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .map-section {
+                height: 400px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .kpi-card {
+                padding: 20px;
+            }
+
+            .kpi-card .value {
+                font-size: 28px;
+            }
+
+            .kpi-card .value .unit {
+                font-size: 14px;
+            }
+
+            .modal-content {
+                padding: 20px;
+            }
+
+            .modal-content h2 {
+                font-size: 20px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <aside class="sidebar">
+        <div class="sidebar-header">
+            <i class="fas fa-heartbeat logo-icon" id="sidebarToggle"></i>
+            <h1>Gestor Saúde <span class="proativo">ProAtivo</span></h1>
+        </div>
+        <nav class="nav-menu">
+            <ul>
+                <li><a href="index5.html" class="nav-link active">
+                        <i class="fas fa-home nav-icon"></i>
+                        <span class="nav-text">Dashboard</span>
+                    </a></li>
+                <li><a href="analise.html" class="nav-link">
+                        <i class="fas fa-chart-line nav-icon"></i>
+                        <span class="nav-text">Análises e Simulação</span>
+                    </a></li>
+                <li><a href="analises_ia.html" class="nav-link">
+                        <i class="fas fa-brain nav-icon"></i>
+                        <span class="nav-text">Insights de IA</span>
+                    </a></li>
+                <li><a href="gestao.html" class="nav-link">
+                        <i class="fas fa-users-cog nav-icon"></i>
+                        <span class="nav-text">Gestão de Recursos</span>
+                    </a></li>
+                <li><a href="visao.html" class="nav-link">
+                        <i class="fas fa-eye nav-icon"></i>
+                        <span class="nav-text">Vigilância Epidemiológica</span>
+                    </a></li>
+            </ul>
+        </nav>
+    </aside>
+
+    <div class="main-content">
+        <header class="header">
+            <h2>Dashboard Principal</h2>
+            <div class="header-actions">
+                <button class="icon-button" id="openAlertsPanel">
+                    <i class="fas fa-bell"></i>
+                    <span class="notification-badge" id="notificationBadge">3</span>
+                </button>
+                <button class="icon-button">
+                    <i class="fas fa-cog"></i>
+                </button>
+                <div class="profile-picture">JS</div>
+            </div>
+        </header>
+
+        <section class="dashboard-grid">
+            <div class="kpi-card neutral">
+                <h3>Total de Casos Ativos</h3>
+                <div class="value"><span class="counter-up" id="kpi-casos-ativos">0</span> <span
+                        class="unit">casos</span></div>
+                <div class="trend neutral"><i class="fas fa-minus"></i> Estável</div>
+            </div>
+
+            <div class="kpi-card negative">
+                <h3>Alertas Críticos Ativos</h3>
+                <div class="value"><span class="counter-up" id="kpi-alertas-ativos">0</span> <span
+                        class="unit">alertas</span></div>
+                <div class="trend up"><i class="fas fa-arrow-up"></i> +2 de ontem</div>
+            </div>
+
+            <div class="kpi-card negative">
+                <h3>Profissionais em Alerta</h3>
+                <div class="value"><span class="counter-up" id="kpi-profissionais-alerta">0</span> <span
+                        class="unit">alertas</span></div>
+                <div class="trend up"><i class="fas fa-arrow-up"></i> +5% na semana</div>
+            </div>
+
+            <div class="kpi-card positive">
+                <h3>Campanhas Sugeridas</h3>
+                <div class="value"><span class="counter-up" id="kpi-campanhas-sugeridas">0</span> <span
+                        class="unit">campanhas</span></div>
+                <div class="trend down"><i class="fas fa-arrow-down"></i> -1 desde a última semana</div>
+            </div>
+        </section>
+
+        <section class="map-section">
+            <h3>Visão Geográfica e Alertas</h3>
+            <div id="mapid"></div>
+        </section>
+
+        <section class="charts-grid">
+            <div class="chart-card">
+                <h3>Casos Diários (Últimos 7 Dias)</h3>
+                <div class="chart-container">
+                    <canvas id="dailyCasesChart"></canvas>
+                </div>
+            </div>
+            <div class="chart-card">
+                <h3>Ocupação de Leitos (Geral)</h3>
+                <div class="chart-container">
+                    <canvas id="bedOccupancyChart"></canvas>
+                </div>
+            </div>
+        </section>
+
+        <div class="contextual-panel" id="contextualPanel">
+            <h4>Detalhes da Área <button class="close-panel" id="closeContextualPanel">&times;</button></h4>
+            <div id="contextualPanelContent">
+            </div>
+        </div>
+    </div>
+
+    <div class="alerts-insights-panel" id="alertsInsightsPanel">
+        <h4><i class="fas fa-exclamation-triangle"></i> Alertas e Insights de IA</h4>
+        <div id="alertsList">
+        </div>
+    </div>
+
+    <div id="alertModalOverlay" class="modal-overlay">
+        <div class="modal-content">
+            <span class="close-button" id="closeAlertModal">&times;</span>
+            <h2 id="modalTitle"></h2>
+            <p id="modalDescription"></p>
+            <div class="modal-actions">
+                <button class="btn secondary" id="modalDismiss">Marcar como Lido</button>
+                <button class="btn" id="modalAction">Ver no Mapa</button>
+            </div>
+        </div>
+    </div>
+
+
+    <script>
+        $(document).ready(function () {
+            // Data simulada para o dashboard
+            const areaSpecificEpidemiologicalData = {
+                "leste": {
+                    name: "Região Leste",
+                    stats: {
+                        totalCases: 250,
+                        activeCases: 80,
+                        newCasesToday: 15,
+                        recoveryRate: "70%"
+                    },
+                    healthFacilities: [{
+                        name: "Hospital Leste",
+                        bedsOccupied: 75,
+                        totalBeds: 100
+                    }],
+                    alerts: [{
+                        type: "critical",
+                        description: "Surto de Dengue em crescimento",
+                        timestamp: "2 min atrás",
+                        id: "alert_dengue_leste_01"
+                    }]
+                },
+                "oeste": {
+                    name: "Região Oeste",
+                    stats: {
+                        totalCases: 120,
+                        activeCases: 30,
+                        newCasesToday: 5,
+                        recoveryRate: "75%"
+                    },
+                    healthFacilities: [{
+                        name: "UBS Oeste",
+                        bedsOccupied: 20,
+                        totalBeds: 30
+                    }],
+                    alerts: [{
+                        type: "warning",
+                        description: "Aumento de casos de Gripe",
+                        timestamp: "1 hora atrás",
+                        id: "alert_gripe_oeste_01"
+                    }]
+                },
+                "centro": {
+                    name: "Região Centro",
+                    stats: {
+                        totalCases: 400,
+                        activeCases: 150,
+                        newCasesToday: 25,
+                        recoveryRate: "65%"
+                    },
+                    healthFacilities: [{
+                        name: "Hospital Central",
+                        bedsOccupied: 90,
+                        totalBeds: 120
+                    }],
+                    alerts: [{
+                        type: "critical",
+                        description: "Alta demanda em UTIs",
+                        timestamp: "30 min atrás",
+                        id: "alert_uti_centro_01"
+                    }, {
+                        type: "warning",
+                        description: "Escassez de insumos básicos",
+                        timestamp: "2 horas atrás",
+                        id: "alert_insumos_centro_01"
+                    }]
+                },
+                "norte": {
+                    name: "Região Norte",
+                    stats: {
+                        totalCases: 90,
+                        activeCases: 20,
+                        newCasesToday: 2,
+                        recoveryRate: "80%"
+                    },
+                    healthFacilities: [], // Exemplo de região sem hospitais específicos
+                    alerts: []
+                },
+                "sul": {
+                    name: "Região Sul",
+                    stats: {
+                        totalCases: 180,
+                        activeCases: 60,
+                        newCasesToday: 10,
+                        recoveryRate: "68%"
+                    },
+                    healthFacilities: [{
+                        name: "UBS Sul",
+                        bedsOccupied: 15,
+                        totalBeds: 20
+                    }],
+                    alerts: [{
+                        type: "info",
+                        description: "Campanha de vacinação iniciando",
+                        timestamp: "Ontem",
+                        id: "info_vacinacao_sul_01"
+                    }]
+                }
+            };
+
+            const alertDetailsData = {
+                "alert_dengue_leste_01": {
+                    title: "Alerta Crítico: Surto de Dengue - Região Leste",
+                    description: "Aumento exponencial de casos de Dengue na região Leste, com foco nos bairros X, Y e Z. Necessário reforço nas equipes de saúde e ações de combate ao mosquito. Projeção de leitos esgotados em 7 dias se a tendência continuar. Recomendado ativação de plano de contingência.",
+                    severity: "Crítico",
+                    area: "Região Leste",
+                    actions: ["Ver áreas afetadas", "Simular impacto em leitos", "Alocar equipes de saúde"]
+                },
+                "alert_gripe_oeste_01": {
+                    title: "Aviso: Aumento de Casos de Gripe - Região Oeste",
+                    description: "Observado um aumento sazonal de casos de gripe na Região Oeste. Situação sob controle, mas requer monitoramento. Recomendado reforço na comunicação sobre vacinação e higiene.",
+                    severity: "Aviso",
+                    area: "Região Oeste",
+                    actions: ["Ver tendências históricas", "Comunicar população"]
+                },
+                "alert_uti_centro_01": {
+                    title: "Alerta Crítico: Alta Demanda em UTIs - Região Centro",
+                    description: "Unidades de Terapia Intensiva na Região Centro operando com 95% de capacidade. Há risco de colapso se houver aumento de casos graves. Priorizar transferências e otimizar alta de pacientes estáveis.",
+                    severity: "Crítico",
+                    area: "Região Centro",
+                    actions: ["Ver leitos disponíveis", "Realocar profissionais", "Ativar hospital de campanha"]
+                },
+                "alert_insumos_centro_01": {
+                    title: "Aviso: Escassez de Insumos - Região Centro",
+                    description: "Relatos de baixa em insumos básicos (luvas, máscaras) em algumas unidades da Região Centro. Necessário agilizar reposição e monitorar estoque.",
+                    severity: "Aviso",
+                    area: "Região Centro",
+                    actions: ["Ver estoque central", "Solicitar compra emergencial"]
+                },
+                "info_vacinacao_sul_01": {
+                    title: "Informação: Campanha de Vacinação - Região Sul",
+                    description: "Nova campanha de vacinação contra XYZ iniciando na Região Sul. Espera-se alta adesão. Monitorar cobertura.",
+                    severity: "Informativo",
+                    area: "Região Sul",
+                    actions: ["Ver meta da campanha", "Acompanhar cobertura"]
+                }
+            };
+
+            const campaignDetailsData = {
+                "vacinacao_gripe_2025": {
+                    name: "Campanha de Vacinação contra Gripe 2025",
+                    description: "Campanha anual de vacinação, focando em grupos de risco e profissionais de saúde.",
+                    status: "Em Andamento",
+                    progress: "60%"
+                },
+                "combate_dengue_foco": {
+                    name: "Ações de Combate ao Aedes Aegypti - Foco Leste",
+                    description: "Reforço nas ações de fumacê e visitas domiciliares na Região Leste devido ao surto.",
+                    status: "Intensificado",
+                    progress: "85%"
+                }
+            };
+
+            const areaCoordinates = {
+                "leste": [-23.42, -51.89], // Coordenadas aproximadas
+                "oeste": [-23.43, -52.05],
+                "centro": [-23.42, -51.94],
+                "norte": [-23.38, -51.92],
+                "sul": [-23.45, -51.93]
+            };
+
+
+            // Inicializa o mapa
+            const map = L.map('mapid').setView([-23.42, -51.93], 12); // Coordenadas de Maringá, PR
+
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+            }).addTo(map);
+
+            // Adiciona marcadores para as áreas e interação
+            const areaMarkers = {}; // Para armazenar os marcadores e suas referências
+
+            for (const areaId in areaSpecificEpidemiologicalData) {
+                const data = areaSpecificEpidemiologicalData[areaId];
+                const coords = areaCoordinates[areaId];
+                if (coords) {
+                    const marker = L.marker(coords).addTo(map)
+                        .bindPopup(`<b>${data.name}</b><br>Casos Ativos: ${data.stats.activeCases}<br>Alertas: ${data.alerts.length}`)
+                        .on('click', () => {
+                            showContextualPanel(areaId);
+                            // Centraliza o mapa no marcador clicado
+                            map.setView(coords, map.getZoom());
+                        });
+                    areaMarkers[areaId] = marker; // Armazena o marcador
+                }
+            }
+
+
+            const contextualPanel = document.getElementById('contextualPanel');
+            const contextualPanelContent = document.getElementById('contextualPanelContent');
+            const closeContextualPanelBtn = document.getElementById('closeContextualPanel');
+
+            function showContextualPanel(areaId) {
+                const data = areaSpecificEpidemiologicalData[areaId];
+                if (!data) {
+                    contextualPanelContent.innerHTML = `<p class="placeholder-text">Dados não disponíveis para esta área.</p>`;
+                    contextualPanel.classList.add('active');
+                    return;
+                }
+
+                let content = `
+                    <div class="detail-item"><strong>Casos Ativos:</strong> <span>${data.stats.activeCases}</span></div>
+                    <div class="detail-item"><strong>Novos Casos Hoje:</strong> <span>${data.stats.newCasesToday}</span></div>
+                    <div class="detail-item"><strong>Total de Casos:</strong> <span>${data.stats.totalCases}</span></div>
+                    <div class="detail-item"><strong>Taxa de Recuperação:</strong> <span>${data.stats.recoveryRate}</span></div>
+                `;
+
+                if (data.healthFacilities && data.healthFacilities.length > 0) {
+                    content += `<h4>Instalações de Saúde</h4>`;
+                    data.healthFacilities.forEach(hf => {
+                        content += `
+                            <div class="detail-item"><strong>${hf.name}:</strong> <span>${hf.bedsOccupied}/${hf.totalBeds} leitos ocupados</span></div>
+                        `;
+                    });
+                }
+
+                if (data.alerts && data.alerts.length > 0) {
+                    content += `<h4>Alertas na Região</h4>`;
+                    data.alerts.forEach(alert => {
+                        let alertClass = '';
+                        switch (alert.type) {
+                            case 'critical':
+                                alertClass = 'critical';
+                                break;
+                            case 'warning':
+                                alertClass = 'warning';
+                                break;
+                            case 'info':
+                                alertClass = 'info';
+                                break;
+                        }
+                        content += `
+                            <div class="alert-card ${alertClass}" onclick="openModal('alertModalOverlay', alertDetailsData['${alert.id}'])">
+                                <i class="fas fa-exclamation-circle"></i>
+                                <div class="alert-content">
+                                    <h5>${alert.description}</h5>
+                                    <p>Há ${alert.timestamp}</p>
+                                </div>
+                            </div>
+                        `;
+                    });
+                } else {
+                    content += `<p class="placeholder-text">Nenhum alerta ativo nesta região.</p>`;
+                }
+
+
+                content += `
+                    <div class="actions">
+                        <button class="btn" onclick="alert('Simular cenários para ${data.name}')">Simular Cenários</button>
+                        <button class="btn secondary" onclick="alert('Ver relatório detalhado de ${data.name}')">Gerar Relatório</button>
+                    </div>
+                `;
+
+                contextualPanelContent.innerHTML = content;
+                contextualPanel.classList.add('active');
+            }
+
+            closeContextualPanelBtn.addEventListener('click', () => {
+                contextualPanel.classList.remove('active');
+            });
+
+            // Toggle Sidebar
+            const sidebar = document.querySelector('.sidebar');
+            const sidebarToggle = document.getElementById('sidebarToggle');
+            const mainContent = document.querySelector('.main-content');
+            const header = document.querySelector('.header');
+
+            sidebarToggle.addEventListener('click', () => {
+                sidebar.classList.toggle('collapsed');
+                if (sidebar.classList.contains('collapsed')) {
+                    mainContent.style.marginLeft = '80px';
+                    header.style.left = '80px';
+                    header.style.width = 'calc(100% - 80px)';
+                } else {
+                    mainContent.style.marginLeft = '250px';
+                    header.style.left = '250px';
+                    header.style.width = 'calc(100% - 250px)';
+                }
+            });
+
+
+            // KPI Counter-Up Animation
+            $('.counter-up').counterUp({
+                delay: 10, // Atraso entre cada incremento
+                time: 1200 // Tempo total da animação
+            });
+
+            // Inicialização dos KPIs e painel de alertas
+            const kpiNovosCasos = document.getElementById('kpi-casos-ativos');
+            const kpiProfissionaisAlerta = document.getElementById('kpi-profissionais-alerta');
+            const kpiAlertasAtivos = document.getElementById('kpi-alertas-ativos');
+            const kpiCampanhasSugeridas = document.getElementById('kpi-campanhas-sugeridas');
+
+            const notificationBadge = document.getElementById('notificationBadge');
+            const alertsInsightsPanel = document.getElementById('alertsInsightsPanel');
+            const alertsList = document.getElementById('alertsList');
+            const openAlertsPanelBtn = document.getElementById('openAlertsPanel');
+
+
+            function updateKPIs() {
+                const totalCasosAtivos = Object.values(areaSpecificEpidemiologicalData).reduce((sum, area) => sum + area.stats.activeCases, 0);
+                kpiNovosCasos.textContent = totalCasosAtivos; // Counter-Up cuidará da animação
+
+                const totalProfissionaisAlerta = Object.values(areaSpecificEpidemiologicalData).reduce((sum, area) => sum + (area.healthFacilities[0] ? Math.ceil(area.healthFacilities[0].bedsOccupied / area.healthFacilities[0].totalBeds * 10) : 0), 0); // Simulação simples
+                kpiProfissionaisAlerta.textContent = totalProfissionaisAlerta;
+
+                const totalAlertasGerais = Object.keys(alertDetailsData).length;
+                kpiAlertasAtivos.textContent = totalAlertasGerais;
+                notificationBadge.textContent = totalAlertasGerais; // Atualiza o badge de notificação
+
+                const totalCampanhasSugeridas = Object.keys(campaignDetailsData).length;
+                kpiCampanhasSugeridas.textContent = totalCampanhasSugeridas;
+
+                // Atualizar trends de forma simplificada (apenas exemplos visuais)
+                const casosCard = kpiNovosCasos.closest('.kpi-card');
+                const alertasCard = kpiAlertasAtivos.closest('.kpi-card');
+                const profissionaisCard = kpiProfissionaisAlerta.closest('.kpi-card');
+                const campanhasCard = kpiCampanhasSugeridas.closest('.kpi-card');
+
+                // Simulação de trend (para demonstração)
+                const random = Math.random();
+                if (random < 0.3) {
+                    casosCard.className = 'kpi-card negative';
+                    casosCard.querySelector('.trend').className = 'trend down';
+                    casosCard.querySelector('.trend').innerHTML = '<i class="fas fa-arrow-down"></i> -5% hoje';
+                } else if (random > 0.7) {
+                    casosCard.className = 'kpi-card positive';
+                    casosCard.querySelector('.trend').className = 'trend up';
+                    casosCard.querySelector('.trend').innerHTML = '<i class="fas fa-arrow-up"></i> +8% hoje';
+                } else {
+                    casosCard.className = 'kpi-card neutral';
+                    casosCard.querySelector('.trend').className = 'trend neutral';
+                    casosCard.querySelector('.trend').innerHTML = '<i class="fas fa-minus"></i> Estável';
+                }
+
+                // O restante das trends são estáticas para simplificar o exemplo
+                alertasCard.className = 'kpi-card negative';
+                alertasCard.querySelector('.trend').className = 'trend up';
+                alertasCard.querySelector('.trend').innerHTML = '<i class="fas fa-arrow-up"></i> +2 de ontem';
+
+                profissionaisCard.className = 'kpi-card negative';
+                profissionaisCard.querySelector('.trend').className = 'trend up';
+                profissionaisCard.querySelector('.trend').innerHTML = '<i class="fas fa-arrow-up"></i> +5% na semana';
+
+                campanhasCard.className = 'kpi-card positive';
+                campanhasCard.querySelector('.trend').className = 'trend down';
+                campanhasCard.querySelector('.trend').innerHTML = '<i class="fas fa-arrow-down"></i> -1 desde a última semana';
+
+            }
+
+            function populateAlertsInsights() {
+                alertsList.innerHTML = ''; // Limpa a lista existente
+
+                // Adicionar alertas
+                for (const alertId in alertDetailsData) {
+                    const alert = alertDetailsData[alertId];
+                    let alertClass = '';
+                    let iconClass = 'fa-bell';
+                    switch (alert.severity) {
+                        case 'Crítico':
+                            alertClass = 'critical';
+                            iconClass = 'fa-triangle-exclamation';
+                            break;
+                        case 'Aviso':
+                            alertClass = 'warning';
+                            iconClass = 'fa-exclamation-circle';
+                            break;
+                        case 'Informativo':
+                            alertClass = 'info';
+                            iconClass = 'fa-info-circle';
+                            break;
+                    }
+
+                    const alertHtml = `
+                        <div class="alert-card ${alertClass}" data-alert-id="${alertId}">
+                            <i class="fas ${iconClass}"></i>
+                            <div class="alert-content">
+                                <h5>${alert.title}</h5>
+                                <p>${alert.description.substring(0, 70)}...</p>
+                            </div>
+                        </div>
+                    `;
+                    alertsList.innerHTML += alertHtml;
+                }
+
+                // Adicionar um insight de IA simulado (exemplo)
+                const insightHtml = `
+                    <div class="insight-card" data-insight-id="insight_surto_futuro">
+                        <i class="fas fa-lightbulb"></i>
+                        <div class="insight-content">
+                            <h5>Previsão de Surto: Gripe no Oeste (Próximas Semanas)</h5>
+                            <p>Modelo de IA prevê aumento de 15% nos casos de gripe na Região Oeste nas próximas 3 semanas.</p>
+                        </div>
+                    </div>
+                `;
+                alertsList.innerHTML += insightHtml;
+
+                // Adicionar listeners para abrir o modal de alertas/insights
+                document.querySelectorAll('.alert-card, .insight-card').forEach(card => {
+                    card.addEventListener('click', () => {
+                        const id = card.dataset.alertId || card.dataset.insightId;
+                        const data = alertDetailsData[id] || { // Fallback para insights se não estiver em alertDetailsData
+                            title: "Insight de IA",
+                            description: "Detalhes do insight de IA.",
+                            severity: "Informativo",
+                            area: "Global",
+                            actions: ["Ver Análise Completa"]
+                        };
+                        openModal('alertModalOverlay', data);
+                    });
+                });
+            }
+
+            // Funções de Modal para Alertas
+            const alertModalOverlay = document.getElementById('alertModalOverlay');
+            const closeAlertModalBtn = document.getElementById('closeAlertModal');
+            const modalTitle = document.getElementById('modalTitle');
+            const modalDescription = document.getElementById('modalDescription');
+            const modalDismissBtn = document.getElementById('modalDismiss');
+            const modalActionButton = document.getElementById('modalAction');
+
+            window.openModal = function (modalId, data) {
+                const modal = document.getElementById(modalId);
+                modalTitle.textContent = data.title;
+                modalDescription.textContent = data.description;
+                modalActionButton.textContent = data.actions[0] || "Detalhes"; // Pega a primeira ação
+                modalActionButton.onclick = () => alert(`Ação para: ${data.title}`); // Ação simulada
+                modalDismissBtn.onclick = () => {
+                    alert(`Alerta "${data.title}" marcado como lido.`);
+                    closeModal(modalId);
+                };
+                modal.classList.add('active');
+            }
+
+            window.closeModal = function (modalId) {
+                const modal = document.getElementById(modalId);
+                modal.classList.remove('active');
+            }
+
+            closeAlertModalBtn.addEventListener('click', () => closeModal('alertModalOverlay'));
+            alertModalOverlay.addEventListener('click', (e) => {
+                if (e.target === alertModalOverlay) {
+                    closeModal('alertModalOverlay');
+                }
+            });
+
+
+            // Charts
+            let dailyCasesChartInstance;
+            let bedOccupancyChartInstance;
+
+            function initializeCharts() {
+                const dailyCasesCtx = document.getElementById('dailyCasesChart').getContext('2d');
+                dailyCasesChartInstance = new Chart(dailyCasesCtx, {
+                    type: 'line',
+                    data: {
+                        labels: ['Dia 1', 'Dia 2', 'Dia 3', 'Dia 4', 'Dia 5', 'Dia 6', 'Dia 7'],
+                        datasets: [{
+                            label: 'Novos Casos Diários',
+                            data: [120, 150, 130, 180, 200, 190, 220],
+                            borderColor: var_accent_color,
+                            backgroundColor: 'rgba(52, 152, 219, 0.2)',
+                            fill: true,
+                            tension: 0.3,
+                            pointRadius: 5,
+                            pointBackgroundColor: var_accent_color,
+                            pointBorderColor: '#fff',
+                            pointHoverRadius: 7
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        animation: { // Animação ao carregar
+                            duration: 1500,
+                            easing: 'easeOutQuart'
+                        },
+                        plugins: {
+                            legend: {
+                                display: false
+                            },
+                            title: {
+                                display: false
+                            }
+                        },
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                grid: {
+                                    color: var_border_color_rgb(0.5)
+                                },
+                                ticks: {
+                                    color: var_light_text_color
+                                }
+                            },
+                            x: {
+                                grid: {
+                                    display: false
+                                },
+                                ticks: {
+                                    color: var_light_text_color
+                                }
+                            }
+                        }
+                    }
+                });
+
+                const bedOccupancyCtx = document.getElementById('bedOccupancyChart').getContext('2d');
+                bedOccupancyChartInstance = new Chart(bedOccupancyCtx, {
+                    type: 'doughnut',
+                    data: {
+                        labels: ['Leitos Ocupados', 'Leitos Livres'],
+                        datasets: [{
+                            data: [75, 25], // Exemplo: 75% ocupado
+                            backgroundColor: [var_danger_color, var_success_color],
+                            hoverOffset: 10
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        animation: { // Animação ao carregar
+                            duration: 1500,
+                            easing: 'easeOutBounce'
+                        },
+                        plugins: {
+                            legend: {
+                                position: 'bottom',
+                                labels: {
+                                    color: var_light_text_color
+                                }
+                            },
+                            title: {
+                                display: false
+                            }
+                        }
+                    }
+                });
+            }
+
+            // Variáveis CSS para uso no JS (para consistência)
+            const getCssVariable = (name) => getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+            const var_primary_color = getCssVariable('--primary-color');
+            const var_secondary_color = getCssVariable('--secondary-color');
+            const var_accent_color = getCssVariable('--accent-color');
+            const var_background_color = getCssVariable('--background-color');
+            const var_card_background = getCssVariable('--card-background');
+            const var_text_color = getCssVariable('--text-color');
+            const var_light_text_color = getCssVariable('--light-text-color');
+            const var_border_color = getCssVariable('--border-color');
+            const var_success_color = getCssVariable('--success-color');
+            const var_danger_color = getCssVariable('--danger-color');
+            const var_warning_color = getCssVariable('--warning-color');
+            const var_info_color = getCssVariable('--info-color');
+
+            // Função para obter cor RGB com opacidade
+            const hexToRgbA = (hex, alpha) => {
+                let c;
+                if (/^#([A-Fa-f0-9]{3}){1,2}$/.test(hex)) {
+                    c = hex.substring(1).split('');
+                    if (c.length === 3) {
+                        c = [c[0], c[0], c[1], c[1], c[2], c[2]];
+                    }
+                    c = '0x' + c.join('');
+                    return 'rgba(' + [(c >> 16) & 255, (c >> 8) & 255, c & 255].join(',') + ',' + alpha + ')';
+                }
+                return hex; // Retorna o original se não for hex
+            };
+            const var_border_color_rgb = (alpha) => hexToRgbA(var_border_color, alpha);
+
+
+            // Event listener para abrir o painel de alertas
+            openAlertsPanelBtn.addEventListener('click', () => {
+                alertsInsightsPanel.classList.toggle('active');
+            });
+
+            // Adiciona evento para fechar o painel de alertas clicando fora dele
+            document.addEventListener('click', (event) => {
+                if (!alertsInsightsPanel.contains(event.target) && !openAlertsPanelBtn.contains(event.target) && alertsInsightsPanel.classList.contains('active')) {
+                    // alertsInsightsPanel.classList.remove('active'); // Manter sempre visível para o conceito "insights flutuantes"
+                }
+            });
+
+
+            // Chamadas iniciais
+            updateKPIs(); // Atualiza os KPIs ao carregar
+            populateAlertsInsights(); // Preenche o painel de alertas
+            initializeCharts(); // Inicializa os gráficos
+            contextualPanelContent.innerHTML = `<p class="placeholder-text">Selecione uma área no mapa para ver detalhes.</p>`;
+        });
+    </script>
+</body>
+
+</html>

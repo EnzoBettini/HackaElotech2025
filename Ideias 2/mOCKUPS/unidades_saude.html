@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Unidades de Saúde - Gestor Saúde ProAtivo</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Montserrat:wght@500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <aside class="sidebar">
+        <div class="sidebar-header">
+            <i class="fas fa-heartbeat logo-icon"></i>
+            <h1>Gestor Saúde <span class="proativo">ProAtivo</span></h1>
+        </div>
+        <nav class="nav-menu">
+            <ul>
+                <li><a href="dashboard.html" class="nav-link">
+                    <i class="fas fa-home nav-icon"></i>
+                    <span class="nav-text">Dashboard</span>
+                </a></li>
+                <li><a href="unidades_saude.html" class="nav-link active">
+                    <i class="fas fa-hospital nav-icon"></i>
+                    <span class="nav-text">Unidades de Saúde</span>
+                </a></li>
+                <li><a href="analises_ia.html" class="nav-link">
+                    <i class="fas fa-brain nav-icon"></i>
+                    <span class="nav-text">Análises e IA</span>
+                </a></li>
+                <li><a href="campanhas.html" class="nav-link">
+                    <i class="fas fa-bullhorn nav-icon"></i>
+                    <span class="nav-text">Campanhas</span>
+                </a></li>
+                <li><a href="alertas_criticos.html" class="nav-link">
+                    <i class="fas fa-exclamation-triangle nav-icon"></i>
+                    <span class="nav-text">Alertas Críticos</span>
+                </a></li>
+                <li><a href="relatorios.html" class="nav-link">
+                    <i class="fas fa-chart-line nav-icon"></i>
+                    <span class="nav-text">Relatórios</span>
+                </a></li>
+            </ul>
+        </nav>
+    </aside>
+
+    <main class="main-content">
+        <header class="top-header">
+            <h2><i class="fas fa-hospital"></i> Unidades de Saúde</h2>
+            <div class="user-profile">
+                <div class="avatar">
+                    <i class="fas fa-user"></i>
+                </div>
+                <span>Administrador</span>
+            </div>
+        </header>
+
+        <div class="dashboard-area">
+            <div class="filters-bar">
+                <div class="filter-group">
+                    <label for="regiao">Região</label>
+                    <select id="regiao" class="filter-select">
+                        <option value="">Todas as Regiões</option>
+                        <option value="norte">Norte</option>
+                        <option value="sul">Sul</option>
+                        <option value="leste">Leste</option>
+                        <option value="oeste">Oeste</option>
+                        <option value="centro">Centro</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label for="tipo">Tipo de Unidade</label>
+                    <select id="tipo" class="filter-select">
+                        <option value="">Todos os Tipos</option>
+                        <option value="ubs">UBS</option>
+                        <option value="upa">UPA</option>
+                        <option value="hospital">Hospital</option>
+                        <option value="especializada">Unidade Especializada</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label for="status">Status</label>
+                    <select id="status" class="filter-select">
+                        <option value="">Todos os Status</option>
+                        <option value="ativo">Ativo</option>
+                        <option value="manutencao">Em Manutenção</option>
+                        <option value="reforma">Em Reforma</option>
+                    </select>
+                </div>
+                <button class="btn btn-primary">
+                    <i class="fas fa-search"></i>
+                    Filtrar
+                </button>
+            </div>
+
+            <div class="content-grid">
+                <div class="data-card">
+                    <h3><i class="fas fa-hospital-user"></i> Capacidade Total</h3>
+                    <div class="chart-container">
+                        <canvas id="capacidadeChart"></canvas>
+                    </div>
+                </div>
+                <div class="data-card">
+                    <h3><i class="fas fa-procedures"></i> Ocupação por Região</h3>
+                    <div class="chart-container">
+                        <canvas id="ocupacaoChart"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <div class="data-card">
+                <h3><i class="fas fa-list"></i> Lista de Unidades</h3>
+                <div class="data-table-container">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Nome da Unidade</th>
+                                <th>Tipo</th>
+                                <th>Região</th>
+                                <th>Ocupação</th>
+                                <th>Status</th>
+                                <th>Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>UBS Vila Nova</td>
+                                <td>UBS</td>
+                                <td>Norte</td>
+                                <td class="col-number">75%</td>
+                                <td><span class="badge badge-success">Ativo</span></td>
+                                <td>
+                                    <button class="btn btn-info btn-sm" onclick="visualizarUnidade(1)">
+                                        <i class="fas fa-eye"></i>
+                                    </button>
+                                    <button class="btn btn-primary btn-sm" onclick="editarUnidade(1)">
+                                        <i class="fas fa-edit"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>Hospital Central</td>
+                                <td>Hospital</td>
+                                <td>Centro</td>
+                                <td class="col-number">92%</td>
+                                <td><span class="badge badge-warning">Alta Ocupação</span></td>
+                                <td>
+                                    <button class="btn btn-info btn-sm" onclick="visualizarUnidade(2)">
+                                        <i class="fas fa-eye"></i>
+                                    </button>
+                                    <button class="btn btn-primary btn-sm" onclick="editarUnidade(2)">
+                                        <i class="fas fa-edit"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>UPA 24h Zona Sul</td>
+                                <td>UPA</td>
+                                <td>Sul</td>
+                                <td class="col-number">45%</td>
+                                <td><span class="badge badge-success">Ativo</span></td>
+                                <td>
+                                    <button class="btn btn-info btn-sm" onclick="visualizarUnidade(3)">
+                                        <i class="fas fa-eye"></i>
+                                    </button>
+                                    <button class="btn btn-primary btn-sm" onclick="editarUnidade(3)">
+                                        <i class="fas fa-edit"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <div class="modal-overlay" id="unidadeModal">
+        <div class="modal-content">
+            <button class="modal-close-btn" onclick="fecharModal()">
+                <i class="fas fa-times"></i>
+            </button>
+            <div class="modal-header">
+                <h3><i class="fas fa-hospital"></i> Detalhes da Unidade</h3>
+            </div>
+            <div class="modal-body">
+                <div id="unidadeDetalhes"></div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="fecharModal()">Fechar</button>
+                <button class="btn btn-primary">Salvar Alterações</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Gráfico de Capacidade
+        const capacidadeCtx = document.getElementById('capacidadeChart').getContext('2d');
+        new Chart(capacidadeCtx, {
+            type: 'doughnut',
+            data: {
+                labels: ['Ocupado', 'Disponível'],
+                datasets: [{
+                    data: [75, 25],
+                    backgroundColor: [
+                        'var(--primary-color)',
+                        'var(--border-color)'
+                    ],
+                    borderWidth: 0
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'bottom'
+                    }
+                }
+            }
+        });
+
+        // Gráfico de Ocupação por Região
+        const ocupacaoCtx = document.getElementById('ocupacaoChart').getContext('2d');
+        new Chart(ocupacaoCtx, {
+            type: 'bar',
+            data: {
+                labels: ['Norte', 'Sul', 'Leste', 'Oeste', 'Centro'],
+                datasets: [{
+                    label: 'Ocupação (%)',
+                    data: [65, 45, 70, 55, 92],
+                    backgroundColor: 'var(--primary-color)',
+                    borderRadius: 4
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        display: false
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        max: 100
+                    }
+                }
+            }
+        });
+
+        // Funções de Modal
+        function visualizarUnidade(id) {
+            const modal = document.getElementById('unidadeModal');
+            modal.classList.add('active');
+        }
+
+        function editarUnidade(id) {
+            const modal = document.getElementById('unidadeModal');
+            modal.classList.add('active');
+        }
+
+        function fecharModal() {
+            const modal = document.getElementById('unidadeModal');
+            modal.classList.remove('active');
+        }
+
+        // Toggle Sidebar
+        document.querySelector('.logo-icon').addEventListener('click', () => {
+            document.querySelector('.sidebar').classList.toggle('collapsed');
+        });
+    </script>
+</body>
+</html>

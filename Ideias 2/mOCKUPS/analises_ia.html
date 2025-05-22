@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Análises e IA - Gestor Saúde ProAtivo</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Montserrat:wght@500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <aside class="sidebar">
+        <div class="sidebar-header">
+            <i class="fas fa-heartbeat logo-icon"></i>
+            <h1>Gestor Saúde <span class="proativo">ProAtivo</span></h1>
+        </div>
+        <nav class="nav-menu">
+            <ul>
+                <li><a href="dashboard.html" class="nav-link">
+                    <i class="fas fa-home nav-icon"></i>
+                    <span class="nav-text">Dashboard</span>
+                </a></li>
+                <li><a href="unidades_saude.html" class="nav-link">
+                    <i class="fas fa-hospital nav-icon"></i>
+                    <span class="nav-text">Unidades de Saúde</span>
+                </a></li>
+                <li><a href="analises_ia.html" class="nav-link active">
+                    <i class="fas fa-brain nav-icon"></i>
+                    <span class="nav-text">Análises e IA</span>
+                </a></li>
+                <li><a href="campanhas.html" class="nav-link">
+                    <i class="fas fa-bullhorn nav-icon"></i>
+                    <span class="nav-text">Campanhas</span>
+                </a></li>
+                <li><a href="alertas_criticos.html" class="nav-link">
+                    <i class="fas fa-exclamation-triangle nav-icon"></i>
+                    <span class="nav-text">Alertas Críticos</span>
+                </a></li>
+                <li><a href="relatorios.html" class="nav-link">
+                    <i class="fas fa-chart-line nav-icon"></i>
+                    <span class="nav-text">Relatórios</span>
+                </a></li>
+            </ul>
+        </nav>
+    </aside>
+
+    <main class="main-content">
+        <header class="top-header">
+            <h2><i class="fas fa-brain"></i> Análises e IA</h2>
+            <div class="user-profile">
+                <div class="avatar">
+                    <i class="fas fa-user"></i>
+                </div>
+                <span>Administrador</span>
+            </div>
+        </header>
+
+        <div class="dashboard-area">
+            <div class="filters-bar">
+                <div class="filter-group">
+                    <label for="periodo">Período de Análise</label>
+                    <select id="periodo" class="filter-select">
+                        <option value="7d">Últimos 7 dias</option>
+                        <option value="30d">Últimos 30 dias</option>
+                        <option value="90d">Últimos 90 dias</option>
+                        <option value="365d">Último ano</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label for="modelo">Modelo de IA</label>
+                    <select id="modelo" class="filter-select">
+                        <option value="todos">Todos os Modelos</option>
+                        <option value="predicao">Predição de Demanda</option>
+                        <option value="risco">Análise de Risco</option>
+                        <option value="epidemias">Detecção de Epidemias</option>
+                    </select>
+                </div>
+                <button class="btn btn-primary">
+                    <i class="fas fa-sync"></i>
+                    Atualizar Análises
+                </button>
+            </div>
+
+            <div class="content-grid">
+                <div class="data-card">
+                    <h3><i class="fas fa-chart-line"></i> Predições de Demanda</h3>
+                    <div class="chart-container">
+                        <canvas id="predicaoChart"></canvas>
+                    </div>
+                </div>
+                <div class="data-card">
+                    <h3><i class="fas fa-heartbeat"></i> Análise de Risco</h3>
+                    <div class="chart-container">
+                        <canvas id="riscoChart"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <div class="data-card">
+                <h3><i class="fas fa-virus"></i> Detecção de Epidemias</h3>
+                <div class="chart-container" style="height: 400px;">
+                    <canvas id="epidemiasChart"></canvas>
+                </div>
+            </div>
+
+            <div class="data-card">
+                <h3><i class="fas fa-robot"></i> Insights da IA</h3>
+                <div class="data-table-container">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Data</th>
+                                <th>Tipo</th>
+                                <th>Insight</th>
+                                <th>Confiança</th>
+                                <th>Status</th>
+                                <th>Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>2024-02-15</td>
+                                <td>Predição</td>
+                                <td>Aumento previsto de 30% na demanda de atendimentos respiratórios</td>
+                                <td class="col-number">95%</td>
+                                <td><span class="badge badge-warning">Requer Atenção</span></td>
+                                <td>
+                                    <button class="btn btn-info btn-sm" onclick="visualizarInsight(1)">
+                                        <i class="fas fa-eye"></i>
+                                    </button>
+                                    <button class="btn btn-primary btn-sm" onclick="gerarRelatorio(1)">
+                                        <i class="fas fa-file-alt"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>2024-02-14</td>
+                                <td>Risco</td>
+                                <td>Padrão identificado de aumento de casos de dengue</td>
+                                <td class="col-number">88%</td>
+                                <td><span class="badge badge-danger">Crítico</span></td>
+                                <td>
+                                    <button class="btn btn-info btn-sm" onclick="visualizarInsight(2)">
+                                        <i class="fas fa-eye"></i>
+                                    </button>
+                                    <button class="btn btn-primary btn-sm" onclick="gerarRelatorio(2)">
+                                        <i class="fas fa-file-alt"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>2024-02-13</td>
+                                <td>Epidemia</td>
+                                <td>Possível surto de virose em região específica</td>
+                                <td class="col-number">75%</td>
+                                <td><span class="badge badge-info">Em Análise</span></td>
+                                <td>
+                                    <button class="btn btn-info btn-sm" onclick="visualizarInsight(3)">
+                                        <i class="fas fa-eye"></i>
+                                    </button>
+                                    <button class="btn btn-primary btn-sm" onclick="gerarRelatorio(3)">
+                                        <i class="fas fa-file-alt"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <div class="modal-overlay" id="insightModal">
+        <div class="modal-content">
+            <button class="modal-close-btn" onclick="fecharModal()">
+                <i class="fas fa-times"></i>
+            </button>
+            <div class="modal-header">
+                <h3><i class="fas fa-lightbulb"></i> Detalhes do Insight</h3>
+            </div>
+            <div class="modal-body">
+                <div id="insightDetalhes"></div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="fecharModal()">Fechar</button>
+                <button class="btn btn-primary">Gerar Relatório</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Gráfico de Predição de Demanda
+        const predicaoCtx = document.getElementById('predicaoChart').getContext('2d');
+        new Chart(predicaoCtx, {
+            type: 'line',
+            data: {
+                labels: ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun'],
+                datasets: [{
+                    label: 'Demanda Real',
+                    data: [65, 59, 80, 81, 56, 55],
+                    borderColor: 'var(--primary-color)',
+                    backgroundColor: 'transparent',
+                    tension: 0.4
+                }, {
+                    label: 'Predição',
+                    data: [70, 62, 85, 85, 60, 58],
+                    borderColor: 'var(--accent-color)',
+                    backgroundColor: 'transparent',
+                    borderDash: [5, 5],
+                    tension: 0.4
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'bottom'
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+
+        // Gráfico de Análise de Risco
+        const riscoCtx = document.getElementById('riscoChart').getContext('2d');
+        new Chart(riscoCtx, {
+            type: 'radar',
+            data: {
+                labels: ['Dengue', 'COVID-19', 'Influenza', 'Zika', 'H1N1'],
+                datasets: [{
+                    label: 'Nível de Risco',
+                    data: [80, 45, 60, 30, 40],
+                    backgroundColor: 'rgba(37, 99, 235, 0.2)',
+                    borderColor: 'var(--primary-color)',
+                    pointBackgroundColor: 'var(--primary-color)',
+                    pointBorderColor: '#fff',
+                    pointHoverBackgroundColor: '#fff',
+                    pointHoverBorderColor: 'var(--primary-color)'
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    r: {
+                        beginAtZero: true,
+                        max: 100,
+                        ticks: {
+                            stepSize: 20
+                        }
+                    }
+                }
+            }
+        });
+
+        // Gráfico de Detecção de Epidemias
+        const epidemiasCtx = document.getElementById('epidemiasChart').getContext('2d');
+        new Chart(epidemiasCtx, {
+            type: 'bar',
+            data: {
+                labels: ['Norte', 'Sul', 'Leste', 'Oeste', 'Centro'],
+                datasets: [{
+                    label: 'Casos Confirmados',
+                    data: [120, 90, 150, 85, 200],
+                    backgroundColor: 'var(--primary-color)'
+                }, {
+                    label: 'Casos Suspeitos',
+                    data: [80, 60, 100, 55, 150],
+                    backgroundColor: 'var(--warning-color)'
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'bottom'
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        title: {
+                            display: true,
+                            text: 'Número de Casos'
+                        }
+                    }
+                }
+            }
+        });
+
+        // Funções de Modal
+        function visualizarInsight(id) {
+            const modal = document.getElementById('insightModal');
+            modal.classList.add('active');
+        }
+
+        function gerarRelatorio(id) {
+            // Implementar geração de relatório
+            console.log('Gerando relatório para insight:', id);
+        }
+
+        function fecharModal() {
+            const modal = document.getElementById('insightModal');
+            modal.classList.remove('active');
+        }
+
+        // Toggle Sidebar
+        document.querySelector('.logo-icon').addEventListener('click', () => {
+            document.querySelector('.sidebar').classList.toggle('collapsed');
+        });
+    </script>
+</body>
+</html>

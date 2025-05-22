@@ -1,0 +1,244 @@
+{
+  "kpis": {
+    "casosAtivos": 205,
+    "profissionaisAlerta": 7,
+    "alertasAtivos": 4,
+    "campanhasSugeridas": 3
+  },
+  "campaigns": {
+    "global_camp_gripe": {
+      "title": "Campanha Nacional de Vacinação Contra Gripe (IA)",
+      "description": "Incentivar a vacinação da população contra o vírus Influenza, com foco em grupos de risco.",
+      "audience": "Idosos (60+), crianças (6m-5a), gestantes, profissionais de saúde.",
+      "actions": [
+        "Divulgação em mídia local e redes sociais",
+        "Disponibilização de vacinas em todos os postos e unidades móveis em áreas de baixa cobertura",
+        "Busca ativa de não vacinados em grupos prioritários",
+        "Parceria com escolas e empresas"
+      ],
+      "priority": "Alta",
+      "region": "Todo o município"
+    },
+    "regional_camp_zika_norte": {
+      "title": "Prevenção Intensificada ao Zika Vírus - Região Norte (IA)",
+      "description": "Alertar sobre riscos e métodos de prevenção do Zika, devido ao aumento de vetores.",
+      "audience": "Moradores da Região Norte, especialmente gestantes e mulheres em idade fértil.",
+      "actions": [
+        "Visitas domiciliares de agentes de endemias",
+        "Distribuição de material informativo e repelentes",
+        "Mutirões de limpeza e eliminação de criadouros",
+        "Palestras em centros comunitários"
+      ],
+      "priority": "Alta",
+      "region": "Região Norte"
+    },
+    "dengue_leste": {
+      "title": "Combate Urgente à Dengue - Região Leste (IA)",
+      "description": "Resposta rápida ao aumento significativo de casos de Dengue, visando contenção imediata.",
+      "audience": "Todos os moradores da Região Leste.",
+      "actions": [
+        "Nebulização espacial (fumacê) em áreas críticas",
+        "Remoção de criadouros em imóveis públicos e privados",
+        "Orientação casa a casa sobre prevenção e sintomas",
+        "Instalação de postos de hidratação rápida"
+      ],
+      "priority": "Crítica",
+      "region": "Região Leste"
+    }
+  },
+  "alerts": {
+    "alert_dengue_leste_01": {
+      "title": "Surto de Dengue na Região Leste",
+      "severity": "critical",
+      "description": "Aumento de 35% nos casos suspeitos de dengue nos últimos 3 dias, ultrapassando limite epidêmico.",
+      "area": "Região Leste (Distritos X, Y, Z)",
+      "dataObserved": "89 casos suspeitos reportados, vs 65 na média anterior. Índice de Infestação Predial: 5.2%.",
+      "actions": [
+        "Ativar protocolo de surto nível 3 (municipal)",
+        "Mobilizar agentes de endemias para bloqueio de foco e eliminação de criadouros em toda a região",
+        "Intensificar comunicação de risco com a população",
+        "Verificar capacidade de atendimento nas UBSs da região"
+      ],
+      "timestamp": "2025-05-21 08:30:00"
+    },
+    "alert_sobrecarga_cardio_centro": {
+      "title": "Sobrecarga Crítica: Cardiologia na Região Central",
+      "severity": "critical",
+      "description": "Tempo de espera para consulta cardiológica na Região Central atingiu 25 dias. Todos os cardiologistas da região com agenda lotada por 30+ dias.",
+      "area": "Região Central (Hospital Municipal e UBS Central)",
+      "dataObserved": "Fila de espera: 150 pacientes. Capacidade de atendimento: 100/mês. Último remanejamento há 45 dias.",
+      "actions": [
+        "Analisar possibilidade de remanejamento emergencial de cardiologistas de outras regiões menos demandadas",
+        "Avaliar contratação temporária ou horas extras",
+        "Comunicar unidades para triagem rigorosa de encaminhamentos",
+        "Priorizar casos urgentes"
+      ],
+      "timestamp": "2025-05-20 17:00:00"
+    },
+    "alert_vacina_norte_02": {
+      "title": "Baixa Adesão à Vacina X na Região Norte",
+      "severity": "warning",
+      "description": "Cobertura vacinal para a vacina X (Sarampo) abaixo de 50% da meta na Região Norte, risco de surto.",
+      "area": "Região Norte (Bairros A, B)",
+      "dataObserved": "Apenas 40% da população alvo (crianças 1-5 anos) vacinada. Meta: 95%.",
+      "actions": [
+        "Intensificar divulgação sobre a importância da vacina X",
+        "Verificar disponibilidade de doses e horários de vacinação nos postos da Região Norte",
+        "Considerar busca ativa para grupos prioritários e vacinação em creches/escolas",
+        "Campanha informativa sobre riscos do sarampo"
+      ],
+      "timestamp": "2025-05-20 14:00:00"
+    },
+    "alert_estoque_rural_03": {
+      "title": "Estoque Baixo: Medicamento Y - Zona Rural",
+      "severity": "info",
+      "description": "Sistema de IA prevê possível necessidade de reposição do medicamento Y (Hipertensão) no Posto Rural Alfa em 5 dias.",
+      "area": "Posto Rural Alfa (Zona Rural)",
+      "dataObserved": "Estoque atual: 15 unidades. Consumo médio: 2/dia. Próxima entrega programada: 10 dias.",
+      "actions": [
+        "Confirmar estoque físico no posto via contato telefônico",
+        "Providenciar reposição antecipada se necessário",
+        "Verificar consumo em outras unidades rurais"
+      ],
+      "timestamp": "2025-05-21 10:15:00"
+    }
+  },
+  "areas": {
+    "norte": { "name": "Região Norte", "coords": [-25.40, -49.25], "zoom": 13, "dataId": "norte_data", "iconColor": "#3498DB" },
+    "sul": { "name": "Região Sul", "coords": [-25.50, -49.28], "zoom": 13, "dataId": "sul_data", "iconColor": "#2ECC71" },
+    "leste": { "name": "Região Leste", "coords": [-25.44, -49.20], "zoom": 13, "dataId": "leste_data", "iconColor": "#E74C3C", "hasCriticalAlert": true },
+    "oeste": { "name": "Região Oeste", "coords": [-25.45, -49.35], "zoom": 13, "dataId": "oeste_data", "iconColor": "#F39C12" },
+    "centro": { "name": "Região Central", "coords": [-25.43, -49.27], "zoom": 14, "dataId": "centro_data", "iconColor": "#9B59B6", "hasCriticalAlert": true },
+    "rural": { "name": "Zona Rural", "coords": [-25.35, -49.40], "zoom": 12, "dataId": "rural_data", "iconColor": "#7F8C8D" }
+  },
+  "epidemiologicalData": {
+    "norte_data": {
+      "name": "Região Norte",
+      "stats": { "totalCases": 45, "incidenceRate": "120/100k hab.", "primaryDisease": "Gripe (25 casos, estável)" },
+      "diseaseBreakdown": [
+        { "disease": "Gripe", "cases": 25, "trend": "stable", "trendIcon": "fa-minus" },
+        { "disease": "Zika", "cases": 10, "trend": "up", "trendIcon": "fa-arrow-up" },
+        { "disease": "Outros Respiratórios", "cases": 10, "trend": "stable", "trendIcon": "fa-minus" }
+      ],
+      "alerts": [ { "id": "alert_vacina_norte_02", "type": "warning", "title": "Baixa adesão vacina Sarampo" } ],
+      "campaigns": [ { "id": "regional_camp_zika_norte", "title": "Prevenção Zika Vírus (IA)" } ]
+    },
+    "leste_data": {
+      "name": "Região Leste",
+      "stats": { "totalCases": 89, "incidenceRate": "250/100k hab.", "primaryDisease": "Dengue (70 casos, surto)" },
+      "diseaseBreakdown": [
+        { "disease": "Dengue", "cases": 70, "trend": "critical_up", "trendIcon": "fa-arrow-up" },
+        { "disease": "Chikungunya", "cases": 12, "trend": "up", "trendIcon": "fa-arrow-up" },
+        { "disease": "Viroses Comuns", "cases": 7, "trend": "stable", "trendIcon": "fa-minus" }
+      ],
+      "alerts": [ { "id": "alert_dengue_leste_01", "type": "critical", "title": "Surto de Dengue" } ],
+      "campaigns": [ { "id": "dengue_leste", "title": "Combate Intensivo Dengue (IA)" } ]
+    },
+    "sul_data": {
+      "name": "Região Sul",
+      "stats": { "totalCases": 22, "incidenceRate": "60/100k hab.", "primaryDisease": "Gripe (15 casos, queda)" },
+      "diseaseBreakdown": [
+        { "disease": "Gripe", "cases": 15, "trend": "down", "trendIcon": "fa-arrow-down" },
+        { "disease": "Outros Respiratórios", "cases": 7, "trend": "stable", "trendIcon": "fa-minus" }
+      ],
+      "alerts": [],
+      "campaigns": []
+    },
+    "oeste_data": {
+      "name": "Região Oeste",
+      "stats": { "totalCases": 30, "incidenceRate": "90/100k hab.", "primaryDisease": "Catapora (5 casos, estável)" },
+      "diseaseBreakdown": [
+        { "disease": "Catapora", "cases": 5, "trend": "stable", "trendIcon": "fa-minus" },
+        { "disease": "Conjuntivite", "cases": 12, "trend": "up", "trendIcon": "fa-arrow-up" },
+        { "disease": "Viroses Comuns", "cases": 13, "trend": "stable", "trendIcon": "fa-minus" }
+      ],
+      "alerts": [],
+      "campaigns": []
+    },
+    "centro_data": {
+      "name": "Região Central",
+      "stats": { "totalCases": 15, "incidenceRate": "50/100k hab.", "primaryDisease": "Viroses Comuns (15 casos, estável)" },
+      "diseaseBreakdown": [
+        { "disease": "Viroses Comuns", "cases": 15, "trend": "stable", "trendIcon": "fa-minus" }
+      ],
+      "alerts": [ { "id": "alert_sobrecarga_cardio_centro", "type": "critical", "title": "Sobrecarga Cardiologia" } ],
+      "campaigns": [ { "id": "global_camp_gripe", "title": "Vacinação Gripe (Foco Centro)" } ]
+    },
+    "rural_data": {
+      "name": "Zona Rural",
+      "stats": { "totalCases": 8, "incidenceRate": "30/100k hab.", "primaryDisease": "Sem predominância" },
+      "diseaseBreakdown": [
+        { "disease": "Problemas Gastrointestinais", "cases": 3, "trend": "stable", "trendIcon": "fa-minus" },
+        { "disease": "Acidentes com animais peçonhentos", "cases": 1, "trend": "stable", "trendIcon": "fa-minus" }
+      ],
+      "alerts": [ { "id": "alert_estoque_rural_03", "type": "info", "title": "Verificar Estoque Medicamentos Y" } ],
+      "campaigns": []
+    }
+  },
+  "humanResourcesData": {
+    "norte_data": {
+      "name": "Região Norte",
+      "stats": { "totalProfessionals": 85, "overloadAlerts": 1, "coverageSpecialty": "Ginecologia (75%)" },
+      "specialtyBreakdown": [
+        { "name": "Clínica Geral", "count": 20, "demand": "Alta", "status": "Estável", "statusClass": "stable" },
+        { "name": "Pediatria", "count": 15, "demand": "Média", "status": "Alerta Baixa Cobertura", "statusClass": "warning" },
+        { "name": "Ginecologia", "count": 10, "demand": "Média", "status": "Estável", "statusClass": "stable" }
+      ],
+      "alerts": [ { "id": "rh_alert_norte_ped", "type": "warning", "title": "Pediatria: cobertura abaixo do ideal" } ],
+      "optimizationSuggestions": [ "Considerar remanejamento de pediatra da Região Sul (subutilizado) para UBS Pq. das Nações (Norte) 2x/semana." ]
+    },
+    "leste_data": {
+      "name": "Região Leste",
+      "stats": { "totalProfessionals": 70, "overloadAlerts": 3, "coverageSpecialty": "Enfermagem (Crítico)" },
+      "specialtyBreakdown": [
+        { "name": "Clínica Geral", "count": 18, "demand": "Muito Alta", "status": "Sobrecarga", "statusClass": "critical" },
+        { "name": "Enfermagem", "count": 30, "demand": "Crítica (Pós-surto Dengue)", "status": "Sobrecarga Crítica", "statusClass": "critical" },
+        { "name": "Agente de Endemias", "count": 10, "demand": "Alta", "status": "Necessita Reforço", "statusClass": "warning" }
+      ],
+      "alerts": [ { "id": "rh_alert_leste_cg", "type": "critical", "title": "Clínicos e Enfermeiros em sobrecarga grave" } ],
+      "optimizationSuggestions": [ "Contratação emergencial de 5 enfermeiros para Região Leste.", "Remanejar 2 clínicos da Zona Rural para UBS Esperança (Leste) temporariamente." ]
+    },
+    "sul_data": {
+      "name": "Região Sul",
+      "stats": { "totalProfessionals": 90, "overloadAlerts": 0, "coverageSpecialty": "Odontologia (95%)" },
+      "specialtyBreakdown": [
+        { "name": "Clínica Geral", "count": 25, "demand": "Baixa", "status": "Subutilizado", "statusClass": "stable" },
+        { "name": "Pediatria", "count": 10, "demand": "Baixa", "status": "Subutilizado", "statusClass": "stable" },
+        { "name": "Odontologia", "count": 12, "demand": "Média", "status": "Estável", "statusClass": "stable" }
+      ],
+      "alerts": [],
+      "optimizationSuggestions": [ "Avaliar remanejamento de 1 clínico geral e 1 pediatra para regiões com maior demanda." ]
+    },
+    "oeste_data": {
+      "name": "Região Oeste",
+      "stats": { "totalProfessionals": 75, "overloadAlerts": 1, "coverageSpecialty": "Fisioterapia (60%)" },
+      "specialtyBreakdown": [
+        { "name": "Clínica Geral", "count": 20, "demand": "Média", "status": "Estável", "statusClass": "stable" },
+        { "name": "Fisioterapia", "count": 5, "demand": "Alta", "status": "Alerta Baixa Cobertura", "statusClass": "warning" }
+      ],
+      "alerts": [ { "id": "rh_alert_oeste_fisio", "type": "warning", "title": "Fisioterapia: demanda crescente não atendida" } ],
+      "optimizationSuggestions": [ "Abrir processo para contratação de 2 fisioterapeutas.", "Realizar parceria com clínicas locais para fisioterapia." ]
+    },
+    "centro_data": {
+      "name": "Região Central",
+      "stats": { "totalProfessionals": 120, "overloadAlerts": 2, "coverageSpecialty": "Cardiologia (Crítico)" },
+      "specialtyBreakdown": [
+        { "name": "Cardiologia", "count": 5, "demand": "Crítica", "status": "Sobrecarga Crítica", "statusClass": "critical" },
+        { "name": "Psicologia", "count": 8, "demand": "Alta", "status": "Estável", "statusClass": "stable" },
+        { "name": "Especialistas Diversos", "count": 40, "demand": "Variada", "status": "Monitorar", "statusClass": "warning" }
+      ],
+      "alerts": [ { "id": "alert_sobrecarga_cardio_centro", "type": "critical", "title": "Cardiologia em sobrecarga crítica" } ],
+      "optimizationSuggestions": [ "Implementar teleconsultas para cardiologia (casos de acompanhamento).", "Remanejar cardiologista da UBS Sul (menos demanda) para Hospital Central 3x/semana." ]
+    },
+    "rural_data": {
+      "name": "Zona Rural",
+      "stats": { "totalProfessionals": 30, "overloadAlerts": 0, "coverageSpecialty": "Médico da Família (80%)" },
+      "specialtyBreakdown": [
+        { "name": "Médico da Família", "count": 8, "demand": "Média", "status": "Estável", "statusClass": "stable" },
+        { "name": "Técnico de Enfermagem", "count": 15, "demand": "Média", "status": "Estável", "statusClass": "stable" }
+      ],
+      "alerts": [],
+      "optimizationSuggestions": [ "Expandir programa de saúde itinerante para áreas mais remotas.", "Capacitar técnicos de enfermagem para triagem avançada." ]
+    }
+  }
+}

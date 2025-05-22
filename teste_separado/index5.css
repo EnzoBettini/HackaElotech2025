@@ -1,0 +1,43 @@
+:root {
+    --primary-color: #0A3D62;
+    /* Azul Petróleo */
+    --secondary-color: #2C3E50;
+    /* Azul Escuro */
+    --accent-color: #E67E22;
+    /* Laranja Vibrante */
+    --highlight-color: #1ABC9C;
+    /* Verde Água */
+    --danger-color: #E74C3C;
+    /* Vermelho para alertas críticos */
+    --warning-color: #F39C12;
+    /* Amarelo para alertas de aviso */
+    --info-color: #3498DB;
+    /* Azul para informações */
+    --success-color: #2ECC71;
+    /* Verde para sucesso */
+
+    --text-light: #F8F9FA;
+    --text-dark: #343A40;
+    --bg-light: #FFFFFF;
+    --bg-medium: #ECF0F1;
+    --border-color: #D1D8E0;
+    --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.05);
+    --shadow-md: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: 'Roboto', sans-serif;
+    background-color: var(--bg-medium);
+    color: var(--text-dark);
+    display: flex;
+    height: 100vh;
+    overflow: hidden;
+}
+
+/* ... (todo o CSS do <style> de ideias/index5.html até a linha 800) ... */
